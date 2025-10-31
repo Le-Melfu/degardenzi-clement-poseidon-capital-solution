@@ -1,0 +1,58 @@
+# Maven build
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# Logs
+logs/
+*.log
+spring.log
+hs_err_pid*
+replay_pid*
+
+# Java / Build outputs
+*.class
+bin/
+out/
+
+# Databases (H2)
+*.h2.db
+*.mv.db
+
+# Environment / Secrets
+.env
+.env.local
+*.secret
+
+# IDEs & Editors
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.factorypath
+.vscode/
+*.sw?
+*.orig
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Coverage & reports
+coverage/
+*.exec
+jacoco.exec
+target/surefire-reports/
+
+# Cursor/Editor state
+.cursor/
+.history/
+
+
