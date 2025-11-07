@@ -1,5 +1,6 @@
 package com.nnk.springboot.services;
 
+import com.nnk.springboot.domain.Role;
 import com.nnk.springboot.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,16 +15,22 @@ public class CustomUserDetails implements UserDetails {
 
     public CustomUserDetails(User user) {
         this.user = user;
+        System.out.println("[DebugClem] - CustomUserDetails created for user: " + user.getUsername());
+        System.out.println("[DebugClem] - User authorities: " + getAuthorities());
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+        Role role = user.getRole();
+        if (role != null) {
+            return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        }
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return user.getPasswordHash();
     }
 
     @Override
@@ -53,6 +60,10 @@ public class CustomUserDetails implements UserDetails {
 
     public User getUser() {
         return user;
+    }
+
+    public Long getUserId() {
+        return user.getId();
     }
 }
 

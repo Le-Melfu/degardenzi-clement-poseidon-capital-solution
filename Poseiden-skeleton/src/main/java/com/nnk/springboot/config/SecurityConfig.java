@@ -29,9 +29,14 @@ public class SecurityConfig {
         @Autowired
         private CustomUserDetailsService userDetailsService;
 
+        @Autowired
+        private CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+
+        @Autowired
+        private CustomAuthenticationFailureHandler authenticationFailureHandler;
+
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
                 CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
                 requestHandler.setCsrfRequestAttributeName("_csrf");
 
@@ -39,12 +44,14 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(authz -> authz
                                                 .requestMatchers("/register", "/csrf").permitAll()
                                                 .requestMatchers("/app/login", "/login").permitAll()
+                                                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**")
+                                                .permitAll()
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
                                                 .loginPage("/app/login")
-                                                .loginProcessingUrl("/app/login")
-                                                .defaultSuccessUrl("/bidList/list", true)
-                                                .failureUrl("/app/login?error=true")
+                                                .loginProcessingUrl("/login")
+                                                .successHandler(authenticationSuccessHandler)
+                                                .failureHandler(authenticationFailureHandler)
                                                 .permitAll())
                                 .logout(logout -> logout
                                                 .logoutUrl("/app/logout")
@@ -62,7 +69,9 @@ public class SecurityConfig {
                                                 .sessionConcurrency(concurrency -> concurrency
                                                                 .maximumSessions(1)
                                                                 .maxSessionsPreventsLogin(false)))
-                                .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class);
+                                .addFilterAfter(new com.nnk.springboot.config.CsrfCookieFilter(), CsrfFilter.class)
+                                .addFilterBefore(new com.nnk.springboot.config.LoginRequestLoggingFilter(),
+                                                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
         }

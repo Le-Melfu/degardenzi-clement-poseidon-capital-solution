@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,24 +19,24 @@ public class BidTests {
 
 	@Test
 	public void bidListTest() {
-		BidList bid = new BidList("Account Test", "Type Test", 10d);
+		BidList bid = new BidList("Account Test", "Type Test", BigDecimal.valueOf(10));
 
 		// Save
 		bid = bidListRepository.save(bid);
-		Assertions.assertNotNull(bid.getBidListId());
-		Assertions.assertEquals(bid.getBidQuantity(), 10d, 10d);
+		Assertions.assertNotNull(bid.getId());
+		Assertions.assertEquals(0, bid.getBidQuantity().compareTo(BigDecimal.valueOf(10)));
 
 		// Update
-		bid.setBidQuantity(20d);
+		bid.setBidQuantity(BigDecimal.valueOf(20));
 		bid = bidListRepository.save(bid);
-		Assertions.assertEquals(bid.getBidQuantity(), 20d, 20d);
+		Assertions.assertEquals(0, bid.getBidQuantity().compareTo(BigDecimal.valueOf(20)));
 
 		// Find
 		List<BidList> listResult = bidListRepository.findAll();
 		Assertions.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Integer id = bid.getBidListId();
+		Long id = bid.getId();
 		bidListRepository.delete(bid);
 		Optional<BidList> bidList = bidListRepository.findById(id);
 		Assertions.assertFalse(bidList.isPresent());

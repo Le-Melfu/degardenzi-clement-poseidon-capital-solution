@@ -35,7 +35,7 @@ public class RatingTests {
 		Assertions.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Integer id = rating.getId();
+		Long id = rating.getId();
 		ratingRepository.delete(rating);
 		Optional<Rating> ratingList = ratingRepository.findById(id);
 		Assertions.assertFalse(ratingList.isPresent());

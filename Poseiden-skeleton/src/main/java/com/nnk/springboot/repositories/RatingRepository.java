@@ -2,7 +2,12 @@ package com.nnk.springboot.repositories;
 
 import com.nnk.springboot.domain.Rating;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface RatingRepository extends JpaRepository<Rating, Integer> {
+import java.util.List;
 
+public interface RatingRepository extends JpaRepository<Rating, Long>, JpaSpecificationExecutor<Rating> {
+    List<Rating> findByMoodysRating(String moodysRating);
+    List<Rating> findBySandPRating(String sandPRating);
+    List<Rating> findByFitchRating(String fitchRating);
 }

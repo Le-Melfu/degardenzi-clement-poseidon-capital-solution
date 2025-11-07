@@ -8,6 +8,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "rulename")
@@ -17,14 +22,15 @@ import lombok.ToString;
 @ToString
 @Getter
 @Setter
+@EntityListeners(AuditingEntityListener.class)
 public class RuleName {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
-    private Integer id;
+    private Long id;
 
     @NotBlank(message = "Name is mandatory")
-    @Column(name = "name")
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     @Column(name = "description")
@@ -42,6 +48,18 @@ public class RuleName {
     @Column(name = "sqlPart")
     private String sqlPart;
 
+    @Column(name = "enabled", nullable = false)
+    @Builder.Default
+    private Boolean enabled = true;
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     // Convenience constructor used by tests
     public RuleName(String name, String description, String json, String template, String sqlStr, String sqlPart) {
         this.name = name;
@@ -50,5 +68,6 @@ public class RuleName {
         this.template = template;
         this.sqlStr = sqlStr;
         this.sqlPart = sqlPart;
+        this.enabled = true; // Default value for tests
     }
 }
