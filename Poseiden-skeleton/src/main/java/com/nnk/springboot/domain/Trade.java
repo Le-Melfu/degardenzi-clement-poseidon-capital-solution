@@ -20,7 +20,7 @@ import lombok.ToString;
 @Setter
 public class Trade {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TradeId")
     private Integer id;
 
