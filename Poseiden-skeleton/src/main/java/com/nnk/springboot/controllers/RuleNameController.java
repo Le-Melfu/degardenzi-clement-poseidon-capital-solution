@@ -3,6 +3,7 @@ package com.nnk.springboot.controllers;
 import com.nnk.springboot.domain.RuleName;
 import com.nnk.springboot.repositories.RuleNameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.validation.Valid;
+import java.util.Objects;
 
 @Controller
 public class RuleNameController {
@@ -31,9 +33,10 @@ public class RuleNameController {
     }
 
     @PostMapping("/ruleName/validate")
+    @SuppressWarnings("null")
     public String validate(@Valid RuleName ruleName, BindingResult result, Model model) {
         if (!result.hasErrors()) {
-            ruleNameRepository.save(ruleName);
+            Objects.requireNonNull(ruleNameRepository.save(ruleName));
             model.addAttribute("ruleNames", ruleNameRepository.findAll());
             return "redirect:/ruleName/list";
         }
@@ -41,9 +44,9 @@ public class RuleNameController {
     }
 
     @GetMapping("/ruleName/update/{id}")
-    public String showUpdateForm(@PathVariable("id") Long id, Model model) {
-        RuleName ruleName = ruleNameRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid rule name Id:" + id));
+    public String showUpdateForm(@PathVariable("id") @NonNull Long id, Model model) {
+        RuleName ruleName = Objects.requireNonNull(ruleNameRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid rule name Id:" + id)));
         model.addAttribute("ruleName", ruleName);
         return "ruleName/update";
     }
@@ -61,9 +64,9 @@ public class RuleNameController {
     }
 
     @GetMapping("/ruleName/delete/{id}")
-    public String deleteRuleName(@PathVariable("id") Long id, Model model) {
-        RuleName ruleName = ruleNameRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid rule name Id:" + id));
+    public String deleteRuleName(@PathVariable("id") @NonNull Long id, Model model) {
+        RuleName ruleName = Objects.requireNonNull(ruleNameRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid rule name Id:" + id)));
         ruleNameRepository.delete(ruleName);
         model.addAttribute("ruleNames", ruleNameRepository.findAll());
         return "redirect:/ruleName/list";

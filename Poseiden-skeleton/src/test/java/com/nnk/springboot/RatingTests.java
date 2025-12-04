@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @SpringBootTest
@@ -35,7 +36,7 @@ public class RatingTests {
 		Assertions.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Long id = rating.getId();
+		Long id = Objects.requireNonNull(rating.getId());
 		ratingRepository.delete(rating);
 		Optional<Rating> ratingList = ratingRepository.findById(id);
 		Assertions.assertFalse(ratingList.isPresent());

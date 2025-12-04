@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -27,6 +28,7 @@ public class BidServiceImpl implements BidService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public BidResponseDTO create(BidCreateDTO dto) {
         BidList bid = BidList.builder()
                 .account(dto.getAccount())
@@ -34,21 +36,22 @@ public class BidServiceImpl implements BidService {
                 .bidQuantity(dto.getBidQuantity())
                 .build();
 
-        BidList saved = bidListRepository.save(bid);
+        BidList saved = Objects.requireNonNull(bidListRepository.save(bid));
         return toResponseDTO(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
     public BidResponseDTO findById(Long id) {
-        BidList bid = bidListRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Bid not found with id: " + id));
+        BidList bid = Objects.requireNonNull(bidListRepository.findById(Objects.requireNonNull(id))
+                .orElseThrow(() -> new IllegalArgumentException("Bid not found with id: " + id)));
         return toResponseDTO(bid);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<BidResponseDTO> findAll(Pageable pageable, String account) {
+        Objects.requireNonNull(pageable);
         Specification<BidList> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (account != null && !account.isEmpty()) {
@@ -63,8 +66,8 @@ public class BidServiceImpl implements BidService {
 
     @Override
     public BidResponseDTO update(Long id, BidUpdateDTO dto) {
-        BidList bid = bidListRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Bid not found with id: " + id));
+        BidList bid = Objects.requireNonNull(bidListRepository.findById(Objects.requireNonNull(id))
+                .orElseThrow(() -> new IllegalArgumentException("Bid not found with id: " + id)));
 
         if (dto.getAccount() != null) {
             bid.setAccount(dto.getAccount());
@@ -76,16 +79,17 @@ public class BidServiceImpl implements BidService {
             bid.setBidQuantity(dto.getBidQuantity());
         }
 
-        BidList updated = bidListRepository.save(bid);
+        BidList updated = Objects.requireNonNull(bidListRepository.save(bid));
         return toResponseDTO(updated);
     }
 
     @Override
     public void delete(Long id) {
-        if (!bidListRepository.existsById(id)) {
+        Long nonNullId = Objects.requireNonNull(id);
+        if (!bidListRepository.existsById(nonNullId)) {
             throw new IllegalArgumentException("Bid not found with id: " + id);
         }
-        bidListRepository.deleteById(id);
+        bidListRepository.deleteById(nonNullId);
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @SpringBootTest
@@ -36,7 +37,7 @@ public class CurvePointTests {
 		Assertions.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Long id = curvePoint.getId();
+		Long id = Objects.requireNonNull(curvePoint.getId());
 		curvePointRepository.delete(curvePoint);
 		Optional<CurvePoint> curvePointList = curvePointRepository.findById(id);
 		Assertions.assertFalse(curvePointList.isPresent());

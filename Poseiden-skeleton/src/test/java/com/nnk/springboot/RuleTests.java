@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @SpringBootTest
@@ -35,7 +36,7 @@ public class RuleTests {
 		Assertions.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Long id = rule.getId();
+		Long id = Objects.requireNonNull(rule.getId());
 		ruleNameRepository.delete(rule);
 		Optional<RuleName> ruleList = ruleNameRepository.findById(id);
 		Assertions.assertFalse(ruleList.isPresent());

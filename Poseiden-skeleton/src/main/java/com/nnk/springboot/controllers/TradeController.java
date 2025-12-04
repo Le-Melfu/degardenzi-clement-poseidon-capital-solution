@@ -3,6 +3,7 @@ package com.nnk.springboot.controllers;
 import com.nnk.springboot.domain.Trade;
 import com.nnk.springboot.repositories.TradeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.validation.Valid;
+import java.util.Objects;
 
 @Controller
 public class TradeController {
@@ -30,9 +32,10 @@ public class TradeController {
     }
 
     @PostMapping("/trade/validate")
+    @SuppressWarnings("null")
     public String validate(@Valid Trade trade, BindingResult result, Model model) {
         if (!result.hasErrors()) {
-            tradeRepository.save(trade);
+            Objects.requireNonNull(tradeRepository.save(trade));
             model.addAttribute("trades", tradeRepository.findAll());
             return "redirect:/trade/list";
         }
@@ -40,15 +43,15 @@ public class TradeController {
     }
 
     @GetMapping("/trade/update/{id}")
-    public String showUpdateForm(@PathVariable("id") Long id, Model model) {
-        Trade trade = tradeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid trade Id:" + id));
+    public String showUpdateForm(@PathVariable("id") @NonNull Long id, Model model) {
+        Trade trade = Objects.requireNonNull(tradeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid trade Id:" + id)));
         model.addAttribute("trade", trade);
         return "trade/update";
     }
 
     @PostMapping("/trade/update/{id}")
-    public String updateTrade(@PathVariable("id") Long id, @Valid Trade trade,
+    public String updateTrade(@PathVariable("id") @NonNull Long id, @Valid Trade trade,
             BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "trade/update";
@@ -60,9 +63,9 @@ public class TradeController {
     }
 
     @GetMapping("/trade/delete/{id}")
-    public String deleteTrade(@PathVariable("id") Long id, Model model) {
-        Trade trade = tradeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid trade Id:" + id));
+    public String deleteTrade(@PathVariable("id") @NonNull Long id, Model model) {
+        Trade trade = Objects.requireNonNull(tradeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid trade Id:" + id)));
         tradeRepository.delete(trade);
         model.addAttribute("trades", tradeRepository.findAll());
         return "redirect:/trade/list";

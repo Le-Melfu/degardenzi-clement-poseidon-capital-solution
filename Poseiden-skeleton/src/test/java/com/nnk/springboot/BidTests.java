@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @SpringBootTest
@@ -36,7 +37,7 @@ public class BidTests {
 		Assertions.assertTrue(listResult.size() > 0);
 
 		// Delete
-		Long id = bid.getId();
+		Long id = Objects.requireNonNull(bid.getId());
 		bidListRepository.delete(bid);
 		Optional<BidList> bidList = bidListRepository.findById(id);
 		Assertions.assertFalse(bidList.isPresent());

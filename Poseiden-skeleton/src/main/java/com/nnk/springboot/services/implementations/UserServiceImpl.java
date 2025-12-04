@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -26,6 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public UserResponseDTO create(UserCreateDTO dto) {
         if (userRepository.existsByUsername(dto.getUsername())) {
             throw new IllegalArgumentException("Username already exists: " + dto.getUsername());
@@ -38,29 +41,30 @@ public class UserServiceImpl implements UserService {
                 .role(dto.getRole() != null ? dto.getRole() : Role.USER)
                 .build();
 
-        User saved = userRepository.save(user);
+        User saved = Objects.requireNonNull(userRepository.save(user));
         return toResponseDTO(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserResponseDTO findById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+        User user = Objects.requireNonNull(userRepository.findById(Objects.requireNonNull(id))
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id)));
         return toResponseDTO(user);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<UserResponseDTO> findAll(Pageable pageable) {
+        Objects.requireNonNull(pageable);
         return userRepository.findAll(pageable)
                 .map(this::toResponseDTO);
     }
 
     @Override
     public UserResponseDTO update(Long id, UserUpdateDTO dto) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+        User user = Objects.requireNonNull(userRepository.findById(Objects.requireNonNull(id))
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id)));
 
         if (dto.getFullName() != null) {
             user.setFullName(dto.getFullName());
@@ -69,16 +73,17 @@ public class UserServiceImpl implements UserService {
             user.setRole(dto.getRole());
         }
 
-        User updated = userRepository.save(user);
+        User updated = Objects.requireNonNull(userRepository.save(user));
         return toResponseDTO(updated);
     }
 
     @Override
     public void delete(Long id) {
-        if (!userRepository.existsById(id)) {
+        Long nonNullId = Objects.requireNonNull(id);
+        if (!userRepository.existsById(nonNullId)) {
             throw new IllegalArgumentException("User not found with id: " + id);
         }
-        userRepository.deleteById(id);
+        userRepository.deleteById(nonNullId);
     }
 
     @Override
