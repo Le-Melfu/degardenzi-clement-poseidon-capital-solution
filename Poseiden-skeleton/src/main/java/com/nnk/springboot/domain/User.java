@@ -61,10 +61,10 @@ public class User {
     }
 
     @CreatedDate
-    @Transient
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Transient
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }
