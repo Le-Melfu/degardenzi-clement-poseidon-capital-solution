@@ -103,9 +103,15 @@ CREATE TABLE Users (
   password VARCHAR(125),
   fullname VARCHAR(125),
   role VARCHAR(125),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
 
   PRIMARY KEY (Id)
 );
 
+-- Mots de passe par défaut: "123456" pour tous les utilisateurs
+-- Pour tester/générer un hash, exécutez: mvn test -Dtest=PasswordDecoderTest
+-- Le hash BCrypt pour "123456" sera affiché dans la console
+-- Le hash existant $2a$10$pBV8ILO/s/nao4wVnGLrh.sa/rnr5pDpbeC4E.KNzQWoy8obFZdaa correspond bien à "123456"
 insert into Users(fullname, username, password, role) values("Administrator", "admin", "$2a$10$pBV8ILO/s/nao4wVnGLrh.sa/rnr5pDpbeC4E.KNzQWoy8obFZdaa", "ADMIN");
 insert into Users(fullname, username, password, role) values("User", "user", "$2a$10$pBV8ILO/s/nao4wVnGLrh.sa/rnr5pDpbeC4E.KNzQWoy8obFZdaa", "USER");

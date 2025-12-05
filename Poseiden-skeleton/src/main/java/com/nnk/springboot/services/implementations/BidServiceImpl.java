@@ -4,6 +4,7 @@ import com.nnk.springboot.domain.BidList;
 import com.nnk.springboot.dto.BidCreateDTO;
 import com.nnk.springboot.dto.BidResponseDTO;
 import com.nnk.springboot.dto.BidUpdateDTO;
+import com.nnk.springboot.exception.EntityNotFoundException;
 import com.nnk.springboot.repositories.BidListRepository;
 import com.nnk.springboot.services.interfaces.BidService;
 import jakarta.persistence.criteria.Predicate;
@@ -44,7 +45,7 @@ public class BidServiceImpl implements BidService {
     @Transactional(readOnly = true)
     public BidResponseDTO findById(Long id) {
         BidList bid = Objects.requireNonNull(bidListRepository.findById(Objects.requireNonNull(id))
-                .orElseThrow(() -> new IllegalArgumentException("Bid not found with id: " + id)));
+                .orElseThrow(() -> new EntityNotFoundException("Bid not found with id: " + id)));
         return toResponseDTO(bid);
     }
 
@@ -67,7 +68,7 @@ public class BidServiceImpl implements BidService {
     @Override
     public BidResponseDTO update(Long id, BidUpdateDTO dto) {
         BidList bid = Objects.requireNonNull(bidListRepository.findById(Objects.requireNonNull(id))
-                .orElseThrow(() -> new IllegalArgumentException("Bid not found with id: " + id)));
+                .orElseThrow(() -> new EntityNotFoundException("Bid not found with id: " + id)));
 
         if (dto.getAccount() != null) {
             bid.setAccount(dto.getAccount());
@@ -87,7 +88,7 @@ public class BidServiceImpl implements BidService {
     public void delete(Long id) {
         Long nonNullId = Objects.requireNonNull(id);
         if (!bidListRepository.existsById(nonNullId)) {
-            throw new IllegalArgumentException("Bid not found with id: " + id);
+            throw new EntityNotFoundException("Bid not found with id: " + id);
         }
         bidListRepository.deleteById(nonNullId);
     }
@@ -104,4 +105,3 @@ public class BidServiceImpl implements BidService {
                 .build();
     }
 }
-

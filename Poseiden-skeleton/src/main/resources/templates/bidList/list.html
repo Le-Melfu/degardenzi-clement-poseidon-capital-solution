@@ -39,18 +39,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="bidList : ${bidLists}">
-                            <td style="width: 10%" th:text="${bidList.id}"></td>
-                            <td th:text="${bidList.account}"></td>
-                            <td th:text="${bidList.type}"></td>
-                            <td th:text="${bidList.bidQuantity}"></td>
+                        <tr th:each="bid : ${bids}">
+                            <td style="width: 10%" th:text="${bid.id}"></td>
+                            <td th:text="${bid.account}"></td>
+                            <td th:text="${bid.type}"></td>
+                            <td th:text="${bid.bidQuantity}"></td>
                             <td style="width: 15%" class="text-center">
                                 <a
-                                    th:href="@{/bidList/update/{id}(id=${bidList.id})}"
+                                    th:href="@{/bidList/update/{id}(id=${bid.id})}"
                                     >Edit</a
                                 >&nbsp;|&nbsp;
                                 <a
-                                    th:href="@{/bidList/delete/{id}(id=${bidList.id})}"
+                                    th:href="@{/bidList/delete/{id}(id=${bid.id})}"
                                     >Delete</a
                                 >
                             </td>
