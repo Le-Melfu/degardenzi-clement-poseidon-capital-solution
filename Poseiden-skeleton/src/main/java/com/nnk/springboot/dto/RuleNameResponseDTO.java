@@ -5,20 +5,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CurvePointResponseDTO {
+public class RuleNameResponseDTO {
     private Long id;
-    private Integer curveId;
-    private LocalDateTime asOfDate;
-    private BigDecimal term;
-    private BigDecimal value;
+    private String name;
+    private String description;
+    private String json;
+    private String template;
+    private String sqlStr;
+    private String sqlPart;
+    private Boolean enabled;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
-

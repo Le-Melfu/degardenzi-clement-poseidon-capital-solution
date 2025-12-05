@@ -4,6 +4,7 @@ import com.nnk.springboot.domain.CurvePoint;
 import com.nnk.springboot.dto.CurvePointCreateDTO;
 import com.nnk.springboot.dto.CurvePointResponseDTO;
 import com.nnk.springboot.dto.CurvePointUpdateDTO;
+import com.nnk.springboot.exception.EntityNotFoundException;
 import com.nnk.springboot.repositories.CurvePointRepository;
 import com.nnk.springboot.services.interfaces.CurvePointService;
 import jakarta.persistence.criteria.Predicate;
@@ -32,6 +33,7 @@ public class CurvePointServiceImpl implements CurvePointService {
     @SuppressWarnings("null")
     public CurvePointResponseDTO create(CurvePointCreateDTO dto) {
         CurvePoint curvePoint = CurvePoint.builder()
+                .curveId(dto.getCurveId())
                 .asOfDate(dto.getAsOfDate())
                 .term(dto.getTerm())
                 .value(dto.getValue())
@@ -45,7 +47,7 @@ public class CurvePointServiceImpl implements CurvePointService {
     @Transactional(readOnly = true)
     public CurvePointResponseDTO findById(Long id) {
         CurvePoint curvePoint = Objects.requireNonNull(curvePointRepository.findById(Objects.requireNonNull(id))
-                .orElseThrow(() -> new IllegalArgumentException("CurvePoint not found with id: " + id)));
+                .orElseThrow(() -> new EntityNotFoundException("CurvePoint not found with id: " + id)));
         return toResponseDTO(curvePoint);
     }
 
@@ -72,8 +74,11 @@ public class CurvePointServiceImpl implements CurvePointService {
     @Override
     public CurvePointResponseDTO update(Long id, CurvePointUpdateDTO dto) {
         CurvePoint curvePoint = Objects.requireNonNull(curvePointRepository.findById(Objects.requireNonNull(id))
-                .orElseThrow(() -> new IllegalArgumentException("CurvePoint not found with id: " + id)));
+                .orElseThrow(() -> new EntityNotFoundException("CurvePoint not found with id: " + id)));
 
+        if (dto.getCurveId() != null) {
+            curvePoint.setCurveId(dto.getCurveId());
+        }
         if (dto.getAsOfDate() != null) {
             curvePoint.setAsOfDate(dto.getAsOfDate());
         }
@@ -92,7 +97,7 @@ public class CurvePointServiceImpl implements CurvePointService {
     public void delete(Long id) {
         Long nonNullId = Objects.requireNonNull(id);
         if (!curvePointRepository.existsById(nonNullId)) {
-            throw new IllegalArgumentException("CurvePoint not found with id: " + id);
+            throw new EntityNotFoundException("CurvePoint not found with id: " + id);
         }
         curvePointRepository.deleteById(nonNullId);
     }
@@ -101,6 +106,7 @@ public class CurvePointServiceImpl implements CurvePointService {
     public CurvePointResponseDTO toResponseDTO(CurvePoint curvePoint) {
         return CurvePointResponseDTO.builder()
                 .id(curvePoint.getId())
+                .curveId(curvePoint.getCurveId())
                 .asOfDate(curvePoint.getAsOfDate())
                 .term(curvePoint.getTerm())
                 .value(curvePoint.getValue())
@@ -109,4 +115,3 @@ public class CurvePointServiceImpl implements CurvePointService {
                 .build();
     }
 }
-

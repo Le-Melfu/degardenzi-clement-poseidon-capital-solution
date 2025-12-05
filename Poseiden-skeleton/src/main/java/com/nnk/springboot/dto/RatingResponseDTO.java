@@ -5,19 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CurvePointResponseDTO {
+public class RatingResponseDTO {
     private Long id;
-    private Integer curveId;
-    private LocalDateTime asOfDate;
-    private BigDecimal term;
-    private BigDecimal value;
+    private String moodysRating;
+    private String sandPRating;
+    private String fitchRating;
+    private Integer orderNumber;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

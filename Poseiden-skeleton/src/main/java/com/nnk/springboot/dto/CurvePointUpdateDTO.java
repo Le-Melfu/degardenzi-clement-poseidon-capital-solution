@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class CurvePointUpdateDTO {
+    private Integer curveId;
     private LocalDateTime asOfDate;
 
     @PositiveOrZero(message = "Term must be positive or zero")

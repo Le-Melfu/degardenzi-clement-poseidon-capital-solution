@@ -31,6 +31,9 @@ public class CurvePoint {
     @Column(name = "Id")
     private Long id;
 
+    @Column(name = "CurveId")
+    private Integer curveId;
+
     @Column(name = "asOfDate")
     private LocalDateTime asOfDate;
 

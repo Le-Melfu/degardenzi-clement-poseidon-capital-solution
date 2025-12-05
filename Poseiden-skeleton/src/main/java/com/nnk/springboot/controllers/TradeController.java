@@ -27,7 +27,7 @@ public class TradeController {
     }
 
     @GetMapping("/trade/add")
-    public String addUser(Trade bid) {
+    public String addTradeForm(Trade trade) {
         return "trade/add";
     }
 
@@ -51,13 +51,14 @@ public class TradeController {
     }
 
     @PostMapping("/trade/update/{id}")
+    @SuppressWarnings("null")
     public String updateTrade(@PathVariable("id") @NonNull Long id, @Valid Trade trade,
             BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "trade/update";
         }
         trade.setId(id);
-        tradeRepository.save(trade);
+        Objects.requireNonNull(tradeRepository.save(trade));
         model.addAttribute("trades", tradeRepository.findAll());
         return "redirect:/trade/list";
     }

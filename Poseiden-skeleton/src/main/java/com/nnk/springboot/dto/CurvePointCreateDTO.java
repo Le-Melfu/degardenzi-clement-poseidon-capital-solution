@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class CurvePointCreateDTO {
+    private Integer curveId;
     private LocalDateTime asOfDate;
 
     @NotNull(message = "Term is mandatory")

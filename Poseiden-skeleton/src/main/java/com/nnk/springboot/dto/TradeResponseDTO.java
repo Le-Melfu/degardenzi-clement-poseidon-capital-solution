@@ -12,12 +12,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CurvePointResponseDTO {
+public class TradeResponseDTO {
     private Long id;
-    private Integer curveId;
-    private LocalDateTime asOfDate;
-    private BigDecimal term;
-    private BigDecimal value;
+    private String account;
+    private String type;
+    private BigDecimal buyQuantity;
+    private BigDecimal sellQuantity;
+    private LocalDateTime tradeDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

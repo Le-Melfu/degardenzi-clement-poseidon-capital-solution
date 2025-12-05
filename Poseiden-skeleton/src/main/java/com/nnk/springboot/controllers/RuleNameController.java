@@ -52,13 +52,14 @@ public class RuleNameController {
     }
 
     @PostMapping("/ruleName/update/{id}")
-    public String updateRuleName(@PathVariable("id") Long id, @Valid RuleName ruleName,
+    @SuppressWarnings("null")
+    public String updateRuleName(@PathVariable("id") @NonNull Long id, @Valid RuleName ruleName,
             BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "ruleName/update";
         }
         ruleName.setId(id);
-        ruleNameRepository.save(ruleName);
+        Objects.requireNonNull(ruleNameRepository.save(ruleName));
         model.addAttribute("ruleNames", ruleNameRepository.findAll());
         return "redirect:/ruleName/list";
     }

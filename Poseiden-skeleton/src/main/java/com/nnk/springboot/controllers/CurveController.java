@@ -27,7 +27,7 @@ public class CurveController {
     }
 
     @GetMapping("/curvePoint/add")
-    public String addBidForm(CurvePoint bid) {
+    public String addBidForm(CurvePoint curvePoint) {
         return "curvePoint/add";
     }
 
@@ -51,7 +51,7 @@ public class CurveController {
     }
 
     @PostMapping("/curvePoint/update/{id}")
-    public String updateBid(@PathVariable("id") Long id, @Valid CurvePoint curvePoint,
+    public String updateBid(@PathVariable("id") @NonNull Long id, @Valid CurvePoint curvePoint,
             BindingResult result, Model model) {
         if (result.hasErrors()) {
             return "curvePoint/update";
