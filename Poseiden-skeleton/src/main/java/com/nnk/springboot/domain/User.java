@@ -3,6 +3,7 @@ package com.nnk.springboot.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import com.nnk.springboot.validation.ValidPassword;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -40,7 +41,7 @@ public class User {
     private String passwordHash;
 
     @Transient
-    @Size(min = 8, message = "Password must be at least 8 characters")
+    @ValidPassword
     private String password;
 
     @Column(name = "fullname")

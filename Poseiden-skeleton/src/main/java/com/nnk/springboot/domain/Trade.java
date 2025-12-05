@@ -2,6 +2,7 @@ package com.nnk.springboot.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,9 +39,11 @@ public class Trade {
     @Column(name = "type")
     private String type;
 
+    @PositiveOrZero(message = "Buy quantity must be positive or zero")
     @Column(name = "buyQuantity")
     private BigDecimal buyQuantity;
 
+    @PositiveOrZero(message = "Sell quantity must be positive or zero")
     @Column(name = "sellQuantity")
     private BigDecimal sellQuantity;
 

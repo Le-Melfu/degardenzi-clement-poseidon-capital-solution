@@ -43,6 +43,7 @@ public class CurvePoint {
     private BigDecimal term;
 
     @NotNull(message = "Value is mandatory")
+    @PositiveOrZero(message = "Value must be positive or zero")
     @Column(name = "value", nullable = false)
     private BigDecimal value;
 

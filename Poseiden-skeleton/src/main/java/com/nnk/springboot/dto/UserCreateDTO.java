@@ -1,6 +1,7 @@
 package com.nnk.springboot.dto;
 
 import com.nnk.springboot.domain.Role;
+import com.nnk.springboot.validation.ValidPassword;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class UserCreateDTO {
     private String username;
 
     @NotBlank(message = "Password is mandatory")
-    @Size(min = 8, message = "Password must be at least 8 characters")
+    @ValidPassword
     private String password;
 
     private String fullName;
