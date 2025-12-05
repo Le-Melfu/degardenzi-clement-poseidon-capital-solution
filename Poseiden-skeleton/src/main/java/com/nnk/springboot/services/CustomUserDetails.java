@@ -15,8 +15,6 @@ public class CustomUserDetails implements UserDetails {
 
     public CustomUserDetails(User user) {
         this.user = user;
-        System.out.println("[DebugClem] - CustomUserDetails created for user: " + user.getUsername());
-        System.out.println("[DebugClem] - User authorities: " + getAuthorities());
     }
 
     @Override

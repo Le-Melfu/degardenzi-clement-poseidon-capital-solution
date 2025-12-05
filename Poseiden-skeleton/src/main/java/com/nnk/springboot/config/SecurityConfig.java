@@ -1,7 +1,6 @@
 package com.nnk.springboot.config;
 
 import com.nnk.springboot.services.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -28,14 +27,20 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-        @Autowired
-        private CustomUserDetailsService userDetailsService;
+        private final CustomUserDetailsService userDetailsService;
+        private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+        private final CustomAuthenticationFailureHandler authenticationFailureHandler;
+        private final LoginRequestLoggingFilter loginRequestLoggingFilter;
 
-        @Autowired
-        private CustomAuthenticationSuccessHandler authenticationSuccessHandler;
-
-        @Autowired
-        private CustomAuthenticationFailureHandler authenticationFailureHandler;
+        public SecurityConfig(CustomUserDetailsService userDetailsService,
+                        CustomAuthenticationSuccessHandler authenticationSuccessHandler,
+                        CustomAuthenticationFailureHandler authenticationFailureHandler,
+                        LoginRequestLoggingFilter loginRequestLoggingFilter) {
+                this.userDetailsService = userDetailsService;
+                this.authenticationSuccessHandler = authenticationSuccessHandler;
+                this.authenticationFailureHandler = authenticationFailureHandler;
+                this.loginRequestLoggingFilter = loginRequestLoggingFilter;
+        }
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -71,7 +76,7 @@ public class SecurityConfig {
                                                                 .maximumSessions(1)
                                                                 .maxSessionsPreventsLogin(false)))
                                 .addFilterAfter(new com.nnk.springboot.config.CsrfCookieFilter(), CsrfFilter.class)
-                                .addFilterBefore(new com.nnk.springboot.config.LoginRequestLoggingFilter(),
+                                .addFilterBefore(loginRequestLoggingFilter,
                                                 org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();

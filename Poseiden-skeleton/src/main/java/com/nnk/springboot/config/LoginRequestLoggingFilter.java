@@ -1,5 +1,6 @@
 package com.nnk.springboot.config;
 
+import com.nnk.springboot.services.LoggerService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +16,12 @@ import java.io.IOException;
 @Order(1)
 public class LoginRequestLoggingFilter extends OncePerRequestFilter {
 
+    private final LoggerService logger;
+
+    public LoginRequestLoggingFilter(LoggerService logger) {
+        this.logger = logger;
+    }
+
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
@@ -22,25 +29,9 @@ public class LoginRequestLoggingFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
         
-        // Log all requests to /login
         if ("/login".equals(requestURI) && "POST".equals(method)) {
-            System.out.println("[DebugClem] ========== LOGIN POST REQUEST ==========");
-            System.out.println("[DebugClem] - Request URI: " + requestURI);
-            System.out.println("[DebugClem] - Request method: " + method);
-            System.out.println("[DebugClem] - Request URL: " + request.getRequestURL());
-            System.out.println("[DebugClem] - Username parameter: " + request.getParameter("username"));
-            System.out.println("[DebugClem] - Password parameter present: " + (request.getParameter("password") != null));
-            
-            // Log CSRF token
-            String csrfToken = request.getParameter("_csrf");
-            if (csrfToken == null) {
-                csrfToken = request.getHeader("X-XSRF-TOKEN");
-            }
-            System.out.println("[DebugClem] - CSRF token present: " + (csrfToken != null));
-            
-            // Log session
-            System.out.println("[DebugClem] - Session ID: " + (request.getSession(false) != null ? request.getSession().getId() : "No session"));
-            System.out.println("[DebugClem] ========================================");
+            String username = request.getParameter("username");
+            logger.i("Login attempt for user: {}", username != null ? username : "unknown");
         }
         
         filterChain.doFilter(request, response);

@@ -1,5 +1,6 @@
 package com.nnk.springboot.config;
 
+import com.nnk.springboot.services.LoggerService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,23 +13,19 @@ import java.io.IOException;
 @Component
 public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    public CustomAuthenticationFailureHandler() {
+    private final LoggerService logger;
+
+    public CustomAuthenticationFailureHandler(LoggerService logger) {
         super();
+        this.logger = logger;
         setDefaultFailureUrl("/app/login?error=true");
     }
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException, ServletException {
-        System.out.println("[DebugClem] ========== AUTHENTICATION FAILURE ==========");
-        System.out.println("[DebugClem] - Exception type: " + exception.getClass().getName());
-        System.out.println("[DebugClem] - Exception message: " + exception.getMessage());
-        System.out.println("[DebugClem] - Request method: " + request.getMethod());
-        System.out.println("[DebugClem] - Request URI: " + request.getRequestURI());
-        System.out.println("[DebugClem] - Username parameter: " + request.getParameter("username"));
-        System.out.println("[DebugClem] - Password parameter present: " + (request.getParameter("password") != null));
-        System.out.println("[DebugClem] - Redirecting to: /app/login?error=true");
-        System.out.println("[DebugClem] ============================================");
+        String username = request.getParameter("username");
+        logger.w("Authentication failed for user: {} - {}", username != null ? username : "unknown", exception.getMessage());
         super.onAuthenticationFailure(request, response, exception);
     }
 }
