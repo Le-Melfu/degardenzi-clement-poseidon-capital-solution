@@ -5,6 +5,7 @@ import com.nnk.springboot.domain.User;
 import com.nnk.springboot.dto.UserCreateDTO;
 import com.nnk.springboot.dto.UserResponseDTO;
 import com.nnk.springboot.dto.UserUpdateDTO;
+import com.nnk.springboot.exception.EntityNotFoundException;
 import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.services.interfaces.UserService;
 import org.springframework.data.domain.Page;
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserResponseDTO findById(Long id) {
         User user = Objects.requireNonNull(userRepository.findById(Objects.requireNonNull(id))
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id)));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id)));
         return toResponseDTO(user);
     }
 
@@ -64,7 +65,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO update(Long id, UserUpdateDTO dto) {
         User user = Objects.requireNonNull(userRepository.findById(Objects.requireNonNull(id))
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id)));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id)));
 
         if (dto.getFullName() != null) {
             user.setFullName(dto.getFullName());
@@ -81,7 +82,7 @@ public class UserServiceImpl implements UserService {
     public void delete(Long id) {
         Long nonNullId = Objects.requireNonNull(id);
         if (!userRepository.existsById(nonNullId)) {
-            throw new IllegalArgumentException("User not found with id: " + id);
+            throw new EntityNotFoundException("User not found with id: " + id);
         }
         userRepository.deleteById(nonNullId);
     }

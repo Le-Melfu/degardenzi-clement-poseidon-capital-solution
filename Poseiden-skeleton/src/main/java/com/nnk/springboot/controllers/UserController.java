@@ -29,14 +29,19 @@ public class UserController {
     }
 
     @GetMapping("/user/add")
-    public String addUser(User bid) {
+    public String addUserForm(Model model) {
+        model.addAttribute("user", new User());
         return "user/add";
     }
 
     @PostMapping("/user/validate")
+    @SuppressWarnings("null")
     public String validate(@Valid User user, BindingResult result, Model model) {
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
             result.rejectValue("password", "error.password", "Password is mandatory");
+        }
+        if (user.getUsername() != null && userRepository.existsByUsername(user.getUsername())) {
+            result.rejectValue("username", "error.username", "Username already exists");
         }
         if (!result.hasErrors()) {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -45,7 +50,7 @@ public class UserController {
             if (user.getRole() == null) {
                 user.setRole(Role.USER);
             }
-            userRepository.save(user);
+            Objects.requireNonNull(userRepository.save(user));
             model.addAttribute("users", userRepository.findAll());
             return "redirect:/user/list";
         }
@@ -62,6 +67,7 @@ public class UserController {
     }
 
     @PostMapping("/user/update/{id}")
+    @SuppressWarnings("null")
     public String updateUser(@PathVariable("id") @NonNull Long id, @Valid User user,
             BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -82,7 +88,7 @@ public class UserController {
             existingUser.setRole(user.getRole());
         }
 
-        userRepository.save(existingUser);
+        Objects.requireNonNull(userRepository.save(existingUser));
         model.addAttribute("users", userRepository.findAll());
         return "redirect:/user/list";
     }
