@@ -1,6 +1,8 @@
 package com.nnk.springboot.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +22,7 @@ public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "moodysRating")
     private String moodysRating;
@@ -31,10 +33,12 @@ public class Rating {
     @Column(name = "fitchRating")
     private String fitchRating;
 
-    @Column(name = "orderNumber")
+    @NotNull(message = "Order number is mandatory")
+    @Positive(message = "Order number must be positive")
+    @Column(name = "orderNumber", nullable = false)
     private Integer orderNumber;
 
-    // Convenience constructor used by tests
+    // Convenience constructor for tests
     public Rating(String moodysRating, String sandPRating, String fitchRating, Integer orderNumber) {
         this.moodysRating = moodysRating;
         this.sandPRating = sandPRating;

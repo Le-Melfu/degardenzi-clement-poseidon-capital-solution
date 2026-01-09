@@ -2,13 +2,15 @@ package com.nnk.springboot.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import java.sql.Timestamp;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "curvepoint")
@@ -22,28 +24,26 @@ public class CurvePoint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
-    private Integer id;
+    private Long id;
 
     @Column(name = "CurveId")
     private Integer curveId;
 
     @Column(name = "asOfDate")
-    private Timestamp asOfDate;
+    private LocalDateTime asOfDate;
 
     @NotNull(message = "Term is mandatory")
-    @Column(name = "term")
-    private Double term;
+    @PositiveOrZero(message = "Term must be positive or zero")
+    @Column(name = "term", nullable = false)
+    private BigDecimal term;
 
     @NotNull(message = "Value is mandatory")
-    @Column(name = "value")
-    private Double value;
+    @PositiveOrZero(message = "Value must be positive or zero")
+    @Column(name = "value", nullable = false)
+    private BigDecimal value;
 
-    @Column(name = "creationDate")
-    private Timestamp creationDate;
-
-    // Convenience constructor used by tests: (curveId, term, value)
-    public CurvePoint(Integer curveId, Double term, Double value) {
-        this.curveId = curveId;
+    // Convenience constructor for tests
+    public CurvePoint(BigDecimal term, BigDecimal value) {
         this.term = term;
         this.value = value;
     }

@@ -1,12 +1,12 @@
 package com.nnk.springboot.config;
 
 import com.nnk.springboot.services.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.csrf.CsrfFilter;
@@ -24,14 +24,26 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
-        @Autowired
-        private CustomUserDetailsService userDetailsService;
+        private final CustomUserDetailsService userDetailsService;
+        private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+        private final CustomAuthenticationFailureHandler authenticationFailureHandler;
+        private final LoginRequestLoggingFilter loginRequestLoggingFilter;
+
+        public SecurityConfig(CustomUserDetailsService userDetailsService,
+                        CustomAuthenticationSuccessHandler authenticationSuccessHandler,
+                        CustomAuthenticationFailureHandler authenticationFailureHandler,
+                        LoginRequestLoggingFilter loginRequestLoggingFilter) {
+                this.userDetailsService = userDetailsService;
+                this.authenticationSuccessHandler = authenticationSuccessHandler;
+                this.authenticationFailureHandler = authenticationFailureHandler;
+                this.loginRequestLoggingFilter = loginRequestLoggingFilter;
+        }
 
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
                 CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
                 requestHandler.setCsrfRequestAttributeName("_csrf");
 
@@ -39,19 +51,20 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(authz -> authz
                                                 .requestMatchers("/register", "/csrf").permitAll()
                                                 .requestMatchers("/app/login", "/login").permitAll()
+                                                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**")
+                                                .permitAll()
                                                 .anyRequest().authenticated())
                                 .formLogin(form -> form
                                                 .loginPage("/app/login")
-                                                .loginProcessingUrl("/app/login")
-                                                .defaultSuccessUrl("/bidList/list", true)
-                                                .failureUrl("/app/login?error=true")
+                                                .loginProcessingUrl("/login")
+                                                .successHandler(authenticationSuccessHandler)
+                                                .failureHandler(authenticationFailureHandler)
                                                 .permitAll())
                                 .logout(logout -> logout
                                                 .logoutUrl("/app/logout")
                                                 .logoutSuccessUrl("/app/login?logout=true")
                                                 .invalidateHttpSession(true)
-                                                .deleteCookies("JSESSIONID")
-                                                .permitAll())
+                                                .deleteCookies("JSESSIONID"))
                                 .csrf(csrf -> csrf
                                                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                                                 .csrfTokenRequestHandler(requestHandler))
@@ -62,7 +75,9 @@ public class SecurityConfig {
                                                 .sessionConcurrency(concurrency -> concurrency
                                                                 .maximumSessions(1)
                                                                 .maxSessionsPreventsLogin(false)))
-                                .addFilterAfter(new CsrfCookieFilter(), CsrfFilter.class);
+                                .addFilterAfter(new com.nnk.springboot.config.CsrfCookieFilter(), CsrfFilter.class)
+                                .addFilterBefore(loginRequestLoggingFilter,
+                                                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
                 return http.build();
         }
@@ -70,6 +85,11 @@ public class SecurityConfig {
         @Bean
         public PasswordEncoder passwordEncoder() {
                 return new BCryptPasswordEncoder();
+        }
+
+        @Bean
+        public com.nnk.springboot.validation.PasswordValidator passwordValidator() {
+                return new com.nnk.springboot.validation.PasswordValidator();
         }
 
         @Bean

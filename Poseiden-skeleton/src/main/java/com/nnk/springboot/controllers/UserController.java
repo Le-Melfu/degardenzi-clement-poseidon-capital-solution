@@ -2,8 +2,7 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.User;
 import com.nnk.springboot.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,11 +12,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.validation.Valid;
+import com.nnk.springboot.domain.Role;
+import com.nnk.springboot.validation.PasswordValidator;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Controller
 public class UserController {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final PasswordValidator passwordValidator;
+
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, PasswordValidator passwordValidator) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.passwordValidator = passwordValidator;
+    }
 
     @RequestMapping("/user/list")
     public String home(Model model) {
@@ -26,24 +35,37 @@ public class UserController {
     }
 
     @GetMapping("/user/add")
-    public String addUser(User bid) {
+    public String addUserForm(Model model) {
+        model.addAttribute("user", new User());
         return "user/add";
     }
 
     @PostMapping("/user/validate")
     public String validate(@Valid User user, BindingResult result, Model model) {
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            result.rejectValue("password", "error.password", "Password is mandatory");
+        } else {
+            if (!passwordValidator.isValid(user.getPassword(), null)) {
+                result.rejectValue("password", "error.password", "Password must be at least 8 characters, contain at least one uppercase letter, one digit, and one symbol");
+            }
+        }
+        if (user.getUsername() != null && userRepository.existsByUsername(user.getUsername())) {
+            result.rejectValue("username", "error.username", "Username already exists");
+        }
         if (!result.hasErrors()) {
-            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            user.setPassword(encoder.encode(user.getPassword()));
+            user.setPasswordHash(passwordEncoder.encode(user.getPassword()));
+            user.setPassword(null);
+            if (user.getRole() == null) {
+                user.setRole(Role.USER);
+            }
             userRepository.save(user);
-            model.addAttribute("users", userRepository.findAll());
             return "redirect:/user/list";
         }
         return "user/add";
     }
 
     @GetMapping("/user/update/{id}")
-    public String showUpdateForm(@PathVariable("id") Integer id, Model model) {
+    public String showUpdateForm(@PathVariable("id") @NonNull Long id, Model model) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
         user.setPassword("");
@@ -52,26 +74,39 @@ public class UserController {
     }
 
     @PostMapping("/user/update/{id}")
-    public String updateUser(@PathVariable("id") Integer id, @Valid User user,
+    public String updateUser(@PathVariable("id") @NonNull Long id, @Valid User user,
             BindingResult result, Model model) {
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            if (!passwordValidator.isValid(user.getPassword(), null)) {
+                result.rejectValue("password", "error.password", "Password must be at least 8 characters, contain at least one uppercase letter, one digit, and one symbol");
+            }
+        }
         if (result.hasErrors()) {
             return "user/update";
         }
 
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        user.setPassword(encoder.encode(user.getPassword()));
-        user.setId(id);
-        userRepository.save(user);
-        model.addAttribute("users", userRepository.findAll());
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            existingUser.setPasswordHash(passwordEncoder.encode(user.getPassword()));
+        }
+        if (user.getFullName() != null) {
+            existingUser.setFullName(user.getFullName());
+        }
+        if (user.getRole() != null) {
+            existingUser.setRole(user.getRole());
+        }
+
+        userRepository.save(existingUser);
         return "redirect:/user/list";
     }
 
     @GetMapping("/user/delete/{id}")
-    public String deleteUser(@PathVariable("id") Integer id, Model model) {
+    public String deleteUser(@PathVariable("id") @NonNull Long id, Model model) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
         userRepository.delete(user);
-        model.addAttribute("users", userRepository.findAll());
         return "redirect:/user/list";
     }
 }

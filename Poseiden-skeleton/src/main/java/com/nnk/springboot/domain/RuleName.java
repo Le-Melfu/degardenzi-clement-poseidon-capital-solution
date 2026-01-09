@@ -21,10 +21,10 @@ public class RuleName {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
-    private Integer id;
+    private Long id;
 
     @NotBlank(message = "Name is mandatory")
-    @Column(name = "name")
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     @Column(name = "description")
@@ -42,7 +42,11 @@ public class RuleName {
     @Column(name = "sqlPart")
     private String sqlPart;
 
-    // Convenience constructor used by tests
+    @Column(name = "enabled", nullable = false)
+    @Builder.Default
+    private Boolean enabled = true;
+
+    // Convenience constructor for tests
     public RuleName(String name, String description, String json, String template, String sqlStr, String sqlPart) {
         this.name = name;
         this.description = description;
@@ -50,5 +54,6 @@ public class RuleName {
         this.template = template;
         this.sqlStr = sqlStr;
         this.sqlPart = sqlPart;
+        this.enabled = true;
     }
 }

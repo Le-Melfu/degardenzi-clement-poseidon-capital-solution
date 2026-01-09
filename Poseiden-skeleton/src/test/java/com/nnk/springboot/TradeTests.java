@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @SpringBootTest
@@ -16,26 +17,39 @@ public class TradeTests {
 	@Autowired
 	private TradeRepository tradeRepository;
 
+    @Test
+    public void testCreate() {
+        Trade trade = new Trade("Trade Account", "Type");
+        trade = tradeRepository.save(trade);
+        Assertions.assertNotNull(trade.getId());
+        Assertions.assertEquals("Trade Account", trade.getAccount());
+        tradeRepository.delete(trade);
+    }
+
 	@Test
-	public void tradeTest() {
-		Trade trade = new Trade("Trade Account", "Type");
-
-		// Save
+	public void testRead() {
+		Trade trade = new Trade("Trade Account Read", "Type");
 		trade = tradeRepository.save(trade);
-		Assertions.assertNotNull(trade.getTradeId());
-		Assertions.assertTrue(trade.getAccount().equals("Trade Account"));
-
-		// Update
-		trade.setAccount("Trade Account Update");
-		trade = tradeRepository.save(trade);
-		Assertions.assertTrue(trade.getAccount().equals("Trade Account Update"));
-
-		// Find
 		List<Trade> listResult = tradeRepository.findAll();
 		Assertions.assertTrue(listResult.size() > 0);
+		tradeRepository.delete(trade);
+	}
 
-		// Delete
-		Integer id = trade.getTradeId();
+    @Test
+    public void testUpdate() {
+        Trade trade = new Trade("Trade Account", "Type");
+        trade = tradeRepository.save(trade);
+        trade.setAccount("Trade Account Update");
+        trade = tradeRepository.save(trade);
+        Assertions.assertEquals("Trade Account Update", trade.getAccount());
+        tradeRepository.delete(trade);
+    }
+
+	@Test
+	public void testDelete() {
+		Trade trade = new Trade("Trade Account", "Type");
+		trade = tradeRepository.save(trade);
+		Long id = Objects.requireNonNull(trade.getId());
 		tradeRepository.delete(trade);
 		Optional<Trade> tradeList = tradeRepository.findById(id);
 		Assertions.assertFalse(tradeList.isPresent());

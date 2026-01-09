@@ -2,13 +2,15 @@ package com.nnk.springboot.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import java.sql.Timestamp;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "trade")
@@ -22,7 +24,7 @@ public class Trade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "TradeId")
-    private Integer id;
+    private Long id;
 
     @NotBlank(message = "Account is mandatory")
     @Column(name = "account")
@@ -32,72 +34,20 @@ public class Trade {
     @Column(name = "type")
     private String type;
 
+    @PositiveOrZero(message = "Buy quantity must be positive or zero")
     @Column(name = "buyQuantity")
-    private Double buyQuantity;
+    private BigDecimal buyQuantity;
 
+    @PositiveOrZero(message = "Sell quantity must be positive or zero")
     @Column(name = "sellQuantity")
-    private Double sellQuantity;
-
-    @Column(name = "buyPrice")
-    private Double buyPrice;
-
-    @Column(name = "sellPrice")
-    private Double sellPrice;
+    private BigDecimal sellQuantity;
 
     @Column(name = "tradeDate")
-    private Timestamp tradeDate;
+    private LocalDateTime tradeDate;
 
-    @Column(name = "security")
-    private String security;
-
-    @Column(name = "status")
-    private String status;
-
-    @Column(name = "trader")
-    private String trader;
-
-    @Column(name = "benchmark")
-    private String benchmark;
-
-    @Column(name = "book")
-    private String book;
-
-    @Column(name = "creationName")
-    private String creationName;
-
-    @Column(name = "creationDate")
-    private Timestamp creationDate;
-
-    @Column(name = "revisionName")
-    private String revisionName;
-
-    @Column(name = "revisionDate")
-    private Timestamp revisionDate;
-
-    @Column(name = "dealName")
-    private String dealName;
-
-    @Column(name = "dealType")
-    private String dealType;
-
-    @Column(name = "sourceListId")
-    private String sourceListId;
-
-    @Column(name = "side")
-    private String side;
-
-    // Convenience constructor used by tests: (account, type)
+    // Convenience constructor for tests
     public Trade(String account, String type) {
         this.account = account;
         this.type = type;
-    }
-
-    // Legacy-style accessors expected by tests
-    public Integer getTradeId() {
-        return this.id;
-    }
-
-    public void setTradeId(Integer id) {
-        this.id = id;
     }
 }

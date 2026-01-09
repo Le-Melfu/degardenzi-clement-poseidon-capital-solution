@@ -7,7 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @SpringBootTest
@@ -17,25 +19,38 @@ public class BidTests {
 	private BidListRepository bidListRepository;
 
 	@Test
-	public void bidListTest() {
-		BidList bid = new BidList("Account Test", "Type Test", 10d);
-
-		// Save
+	public void testCreate() {
+		BidList bid = new BidList("Account Test", "Type Test", BigDecimal.valueOf(10));
 		bid = bidListRepository.save(bid);
-		Assertions.assertNotNull(bid.getBidListId());
-		Assertions.assertEquals(bid.getBidQuantity(), 10d, 10d);
+		Assertions.assertNotNull(bid.getId());
+		Assertions.assertEquals(0, bid.getBidQuantity().compareTo(BigDecimal.valueOf(10)));
+		bidListRepository.delete(bid);
+	}
 
-		// Update
-		bid.setBidQuantity(20d);
+	@Test
+	public void testRead() {
+		BidList bid = new BidList("Account Test", "Type Test", BigDecimal.valueOf(10));
 		bid = bidListRepository.save(bid);
-		Assertions.assertEquals(bid.getBidQuantity(), 20d, 20d);
-
-		// Find
 		List<BidList> listResult = bidListRepository.findAll();
 		Assertions.assertTrue(listResult.size() > 0);
+		bidListRepository.delete(bid);
+	}
 
-		// Delete
-		Integer id = bid.getBidListId();
+	@Test
+	public void testUpdate() {
+		BidList bid = new BidList("Account Test", "Type Test", BigDecimal.valueOf(10));
+		bid = bidListRepository.save(bid);
+		bid.setBidQuantity(BigDecimal.valueOf(20));
+		bid = bidListRepository.save(bid);
+		Assertions.assertEquals(0, bid.getBidQuantity().compareTo(BigDecimal.valueOf(20)));
+		bidListRepository.delete(bid);
+	}
+
+	@Test
+	public void testDelete() {
+		BidList bid = new BidList("Account Test", "Type Test", BigDecimal.valueOf(10));
+		bid = bidListRepository.save(bid);
+		Long id = Objects.requireNonNull(bid.getId());
 		bidListRepository.delete(bid);
 		Optional<BidList> bidList = bidListRepository.findById(id);
 		Assertions.assertFalse(bidList.isPresent());
