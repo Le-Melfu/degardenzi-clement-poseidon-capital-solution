@@ -18,16 +18,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Service implementation for managing Rating entities.
+ * Provides CRUD operations and business logic for rating management.
+ */
 @Service
 @Transactional
 public class RatingServiceImpl implements RatingService {
 
     private final RatingRepository ratingRepository;
 
+    /**
+     * Constructs a new RatingServiceImpl with the given repository.
+     *
+     * @param ratingRepository the repository for Rating entities
+     */
     public RatingServiceImpl(RatingRepository ratingRepository) {
         this.ratingRepository = ratingRepository;
     }
 
+    /**
+     * Creates a new rating from the provided DTO.
+     *
+     * @param dto the DTO containing rating creation data
+     * @return the created rating as a response DTO
+     */
     @Override
     @SuppressWarnings("null")
     public RatingResponseDTO create(RatingCreateDTO dto) {
@@ -42,6 +57,13 @@ public class RatingServiceImpl implements RatingService {
         return toResponseDTO(saved);
     }
 
+    /**
+     * Retrieves a rating by its ID.
+     *
+     * @param id the ID of the rating to retrieve
+     * @return the rating as a response DTO
+     * @throws EntityNotFoundException if the rating is not found
+     */
     @Override
     @Transactional(readOnly = true)
     public RatingResponseDTO findById(Long id) {
@@ -50,6 +72,13 @@ public class RatingServiceImpl implements RatingService {
         return toResponseDTO(rating);
     }
 
+    /**
+     * Retrieves all ratings with optional filtering by Moodys rating.
+     *
+     * @param pageable pagination information
+     * @param moodysRating optional Moodys rating filter (can be null)
+     * @return a page of rating response DTOs
+     */
     @Override
     @Transactional(readOnly = true)
     public Page<RatingResponseDTO> findAll(Pageable pageable, String moodysRating) {
@@ -66,6 +95,14 @@ public class RatingServiceImpl implements RatingService {
                 .map(this::toResponseDTO);
     }
 
+    /**
+     * Updates an existing rating with the provided data.
+     *
+     * @param id the ID of the rating to update
+     * @param dto the DTO containing update data
+     * @return the updated rating as a response DTO
+     * @throws EntityNotFoundException if the rating is not found
+     */
     @Override
     public RatingResponseDTO update(Long id, RatingUpdateDTO dto) {
         Rating rating = Objects.requireNonNull(ratingRepository.findById(Objects.requireNonNull(id))
@@ -88,6 +125,12 @@ public class RatingServiceImpl implements RatingService {
         return toResponseDTO(updated);
     }
 
+    /**
+     * Deletes a rating by its ID.
+     *
+     * @param id the ID of the rating to delete
+     * @throws EntityNotFoundException if the rating is not found
+     */
     @Override
     public void delete(Long id) {
         Long nonNullId = Objects.requireNonNull(id);
@@ -97,6 +140,12 @@ public class RatingServiceImpl implements RatingService {
         ratingRepository.deleteById(nonNullId);
     }
 
+    /**
+     * Converts a Rating entity to a RatingResponseDTO.
+     *
+     * @param rating the Rating entity to convert
+     * @return the corresponding response DTO
+     */
     @Override
     public RatingResponseDTO toResponseDTO(Rating rating) {
         return RatingResponseDTO.builder()

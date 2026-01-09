@@ -19,16 +19,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Service implementation for managing CurvePoint entities.
+ * Provides CRUD operations and business logic for curve point management.
+ */
 @Service
 @Transactional
 public class CurvePointServiceImpl implements CurvePointService {
 
     private final CurvePointRepository curvePointRepository;
 
+    /**
+     * Constructs a new CurvePointServiceImpl with the given repository.
+     *
+     * @param curvePointRepository the repository for CurvePoint entities
+     */
     public CurvePointServiceImpl(CurvePointRepository curvePointRepository) {
         this.curvePointRepository = curvePointRepository;
     }
 
+    /**
+     * Creates a new curve point from the provided DTO.
+     *
+     * @param dto the DTO containing curve point creation data
+     * @return the created curve point as a response DTO
+     */
     @Override
     @SuppressWarnings("null")
     public CurvePointResponseDTO create(CurvePointCreateDTO dto) {
@@ -43,6 +58,13 @@ public class CurvePointServiceImpl implements CurvePointService {
         return toResponseDTO(saved);
     }
 
+    /**
+     * Retrieves a curve point by its ID.
+     *
+     * @param id the ID of the curve point to retrieve
+     * @return the curve point as a response DTO
+     * @throws EntityNotFoundException if the curve point is not found
+     */
     @Override
     @Transactional(readOnly = true)
     public CurvePointResponseDTO findById(Long id) {
@@ -51,6 +73,14 @@ public class CurvePointServiceImpl implements CurvePointService {
         return toResponseDTO(curvePoint);
     }
 
+    /**
+     * Retrieves all curve points with optional filtering by date range.
+     *
+     * @param pageable pagination information
+     * @param startDate optional start date for filtering (can be null)
+     * @param endDate optional end date for filtering (can be null)
+     * @return a page of curve point response DTOs
+     */
     @Override
     @Transactional(readOnly = true)
     public Page<CurvePointResponseDTO> findAll(Pageable pageable, LocalDateTime startDate, LocalDateTime endDate) {
@@ -71,6 +101,14 @@ public class CurvePointServiceImpl implements CurvePointService {
                 .map(this::toResponseDTO);
     }
 
+    /**
+     * Updates an existing curve point with the provided data.
+     *
+     * @param id the ID of the curve point to update
+     * @param dto the DTO containing update data
+     * @return the updated curve point as a response DTO
+     * @throws EntityNotFoundException if the curve point is not found
+     */
     @Override
     public CurvePointResponseDTO update(Long id, CurvePointUpdateDTO dto) {
         CurvePoint curvePoint = Objects.requireNonNull(curvePointRepository.findById(Objects.requireNonNull(id))
@@ -93,6 +131,12 @@ public class CurvePointServiceImpl implements CurvePointService {
         return toResponseDTO(updated);
     }
 
+    /**
+     * Deletes a curve point by its ID.
+     *
+     * @param id the ID of the curve point to delete
+     * @throws EntityNotFoundException if the curve point is not found
+     */
     @Override
     public void delete(Long id) {
         Long nonNullId = Objects.requireNonNull(id);
@@ -102,6 +146,12 @@ public class CurvePointServiceImpl implements CurvePointService {
         curvePointRepository.deleteById(nonNullId);
     }
 
+    /**
+     * Converts a CurvePoint entity to a CurvePointResponseDTO.
+     *
+     * @param curvePoint the CurvePoint entity to convert
+     * @return the corresponding response DTO
+     */
     @Override
     public CurvePointResponseDTO toResponseDTO(CurvePoint curvePoint) {
         return CurvePointResponseDTO.builder()

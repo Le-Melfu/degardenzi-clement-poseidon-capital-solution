@@ -19,16 +19,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Service implementation for managing Trade entities.
+ * Provides CRUD operations and business logic for trade management.
+ */
 @Service
 @Transactional
 public class TradeServiceImpl implements TradeService {
 
     private final TradeRepository tradeRepository;
 
+    /**
+     * Constructs a new TradeServiceImpl with the given repository.
+     *
+     * @param tradeRepository the repository for Trade entities
+     */
     public TradeServiceImpl(TradeRepository tradeRepository) {
         this.tradeRepository = tradeRepository;
     }
 
+    /**
+     * Creates a new trade from the provided DTO.
+     *
+     * @param dto the DTO containing trade creation data
+     * @return the created trade as a response DTO
+     */
     @Override
     @SuppressWarnings("null")
     public TradeResponseDTO create(TradeCreateDTO dto) {
@@ -44,6 +59,13 @@ public class TradeServiceImpl implements TradeService {
         return toResponseDTO(saved);
     }
 
+    /**
+     * Retrieves a trade by its ID.
+     *
+     * @param id the ID of the trade to retrieve
+     * @return the trade as a response DTO
+     * @throws EntityNotFoundException if the trade is not found
+     */
     @Override
     @Transactional(readOnly = true)
     public TradeResponseDTO findById(Long id) {
@@ -52,6 +74,15 @@ public class TradeServiceImpl implements TradeService {
         return toResponseDTO(trade);
     }
 
+    /**
+     * Retrieves all trades with optional filtering by account and date range.
+     *
+     * @param pageable pagination information
+     * @param account optional account filter (can be null)
+     * @param startDate optional start date for filtering (can be null)
+     * @param endDate optional end date for filtering (can be null)
+     * @return a page of trade response DTOs
+     */
     @Override
     @Transactional(readOnly = true)
     public Page<TradeResponseDTO> findAll(Pageable pageable, String account, LocalDateTime startDate, LocalDateTime endDate) {
@@ -75,6 +106,14 @@ public class TradeServiceImpl implements TradeService {
                 .map(this::toResponseDTO);
     }
 
+    /**
+     * Updates an existing trade with the provided data.
+     *
+     * @param id the ID of the trade to update
+     * @param dto the DTO containing update data
+     * @return the updated trade as a response DTO
+     * @throws EntityNotFoundException if the trade is not found
+     */
     @Override
     public TradeResponseDTO update(Long id, TradeUpdateDTO dto) {
         Trade trade = Objects.requireNonNull(tradeRepository.findById(Objects.requireNonNull(id))
@@ -100,6 +139,12 @@ public class TradeServiceImpl implements TradeService {
         return toResponseDTO(updated);
     }
 
+    /**
+     * Deletes a trade by its ID.
+     *
+     * @param id the ID of the trade to delete
+     * @throws EntityNotFoundException if the trade is not found
+     */
     @Override
     public void delete(Long id) {
         Long nonNullId = Objects.requireNonNull(id);
@@ -109,6 +154,12 @@ public class TradeServiceImpl implements TradeService {
         tradeRepository.deleteById(nonNullId);
     }
 
+    /**
+     * Converts a Trade entity to a TradeResponseDTO.
+     *
+     * @param trade the Trade entity to convert
+     * @return the corresponding response DTO
+     */
     @Override
     public TradeResponseDTO toResponseDTO(Trade trade) {
         return TradeResponseDTO.builder()

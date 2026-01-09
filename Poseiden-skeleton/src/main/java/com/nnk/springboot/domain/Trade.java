@@ -45,7 +45,7 @@ public class Trade {
     @Column(name = "tradeDate")
     private LocalDateTime tradeDate;
 
-    // Convenience constructor used by tests: (account, type)
+    // Convenience constructor for tests
     public Trade(String account, String type) {
         this.account = account;
         this.type = type;

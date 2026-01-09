@@ -42,7 +42,7 @@ public class CurvePoint {
     @Column(name = "value", nullable = false)
     private BigDecimal value;
 
-    // Convenience constructor used by tests: (term, value)
+    // Convenience constructor for tests
     public CurvePoint(BigDecimal term, BigDecimal value) {
         this.term = term;
         this.value = value;

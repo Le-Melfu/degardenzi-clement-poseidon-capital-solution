@@ -17,14 +17,14 @@ public class RatingTests {
 	@Autowired
 	private RatingRepository ratingRepository;
 
-	@Test
-	public void testCreate() {
-		Rating rating = new Rating("Moodys Rating", "Sand PRating", "Fitch Rating", 10);
-		rating = ratingRepository.save(rating);
-		Assertions.assertNotNull(rating.getId());
-		Assertions.assertTrue(rating.getOrderNumber() == 10);
-		ratingRepository.delete(rating);
-	}
+    @Test
+    public void testCreate() {
+        Rating rating = new Rating("Moodys Rating", "Sand PRating", "Fitch Rating", 10);
+        rating = ratingRepository.save(rating);
+        Assertions.assertNotNull(rating.getId());
+        Assertions.assertEquals(10, rating.getOrderNumber());
+        ratingRepository.delete(rating);
+    }
 
 	@Test
 	public void testRead() {
@@ -35,15 +35,15 @@ public class RatingTests {
 		ratingRepository.delete(rating);
 	}
 
-	@Test
-	public void testUpdate() {
-		Rating rating = new Rating("Moodys Rating", "Sand PRating", "Fitch Rating", 10);
-		rating = ratingRepository.save(rating);
-		rating.setOrderNumber(20);
-		rating = ratingRepository.save(rating);
-		Assertions.assertTrue(rating.getOrderNumber() == 20);
-		ratingRepository.delete(rating);
-	}
+    @Test
+    public void testUpdate() {
+        Rating rating = new Rating("Moodys Rating", "Sand PRating", "Fitch Rating", 10);
+        rating = ratingRepository.save(rating);
+        rating.setOrderNumber(20);
+        rating = ratingRepository.save(rating);
+        Assertions.assertEquals(20, rating.getOrderNumber());
+        ratingRepository.delete(rating);
+    }
 
 	@Test
 	public void testDelete() {

@@ -36,7 +36,7 @@ public class BidList {
     @Column(name = "bidQuantity")
     private BigDecimal bidQuantity;
 
-    // Convenience constructor used by tests: (account, type, bidQuantity)
+    // Convenience constructor for tests
     public BidList(String account, String type, BigDecimal bidQuantity) {
         this.account = account;
         this.type = type;

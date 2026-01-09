@@ -2,7 +2,6 @@ package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Rating;
 import com.nnk.springboot.repositories.RatingRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,12 +12,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.validation.Valid;
-import java.util.Objects;
 
 @Controller
 public class RatingController {
-    @Autowired
-    private RatingRepository ratingRepository;
+    private final RatingRepository ratingRepository;
+
+    public RatingController(RatingRepository ratingRepository) {
+        this.ratingRepository = ratingRepository;
+    }
 
     @RequestMapping("/rating/list")
     public String home(Model model) {
@@ -32,11 +33,9 @@ public class RatingController {
     }
 
     @PostMapping("/rating/validate")
-    @SuppressWarnings("null")
     public String validate(@Valid Rating rating, BindingResult result, Model model) {
         if (!result.hasErrors()) {
-            Objects.requireNonNull(ratingRepository.save(rating));
-            model.addAttribute("ratings", ratingRepository.findAll());
+            ratingRepository.save(rating);
             return "redirect:/rating/list";
         }
         return "rating/add";
@@ -44,8 +43,8 @@ public class RatingController {
 
     @GetMapping("/rating/update/{id}")
     public String showUpdateForm(@PathVariable("id") @NonNull Long id, Model model) {
-        Rating rating = Objects.requireNonNull(ratingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid rating Id:" + id)));
+        Rating rating = ratingRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid rating Id:" + id));
         model.addAttribute("rating", rating);
         return "rating/update";
     }
@@ -58,16 +57,14 @@ public class RatingController {
         }
         rating.setId(id);
         ratingRepository.save(rating);
-        model.addAttribute("ratings", ratingRepository.findAll());
         return "redirect:/rating/list";
     }
 
     @GetMapping("/rating/delete/{id}")
     public String deleteRating(@PathVariable("id") @NonNull Long id, Model model) {
-        Rating rating = Objects.requireNonNull(ratingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid rating Id:" + id)));
+        Rating rating = ratingRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid rating Id:" + id));
         ratingRepository.delete(rating);
-        model.addAttribute("ratings", ratingRepository.findAll());
         return "redirect:/rating/list";
     }
 }

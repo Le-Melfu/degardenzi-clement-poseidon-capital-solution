@@ -88,6 +88,11 @@ public class SecurityConfig {
         }
 
         @Bean
+        public com.nnk.springboot.validation.PasswordValidator passwordValidator() {
+                return new com.nnk.springboot.validation.PasswordValidator();
+        }
+
+        @Bean
         public DaoAuthenticationProvider authenticationProvider() {
                 DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
                 authProvider.setUserDetailsService(userDetailsService);

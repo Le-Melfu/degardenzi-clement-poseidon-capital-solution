@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
 @Entity
 @Table(name = "rulename")
 @NoArgsConstructor
@@ -45,7 +46,7 @@ public class RuleName {
     @Builder.Default
     private Boolean enabled = true;
 
-    // Convenience constructor used by tests
+    // Convenience constructor for tests
     public RuleName(String name, String description, String json, String template, String sqlStr, String sqlPart) {
         this.name = name;
         this.description = description;
@@ -53,6 +54,6 @@ public class RuleName {
         this.template = template;
         this.sqlStr = sqlStr;
         this.sqlPart = sqlPart;
-        this.enabled = true; // Default value for tests
+        this.enabled = true;
     }
 }

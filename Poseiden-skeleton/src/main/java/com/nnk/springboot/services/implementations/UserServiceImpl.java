@@ -16,6 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
+/**
+ * Service implementation for managing User entities.
+ * Provides CRUD operations and business logic for user management.
+ */
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -23,11 +27,25 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Constructs a new UserServiceImpl with the given repository and password encoder.
+     *
+     * @param userRepository the repository for User entities
+     * @param passwordEncoder the password encoder for hashing passwords
+     */
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Creates a new user from the provided DTO.
+     * The password is automatically hashed before storage.
+     *
+     * @param dto the DTO containing user creation data
+     * @return the created user as a response DTO
+     * @throws IllegalArgumentException if the username already exists
+     */
     @Override
     @SuppressWarnings("null")
     public UserResponseDTO create(UserCreateDTO dto) {
@@ -46,6 +64,13 @@ public class UserServiceImpl implements UserService {
         return toResponseDTO(saved);
     }
 
+    /**
+     * Retrieves a user by its ID.
+     *
+     * @param id the ID of the user to retrieve
+     * @return the user as a response DTO
+     * @throws EntityNotFoundException if the user is not found
+     */
     @Override
     @Transactional(readOnly = true)
     public UserResponseDTO findById(Long id) {
@@ -54,6 +79,12 @@ public class UserServiceImpl implements UserService {
         return toResponseDTO(user);
     }
 
+    /**
+     * Retrieves all users with pagination.
+     *
+     * @param pageable pagination information
+     * @return a page of user response DTOs
+     */
     @Override
     @Transactional(readOnly = true)
     public Page<UserResponseDTO> findAll(Pageable pageable) {
@@ -62,6 +93,14 @@ public class UserServiceImpl implements UserService {
                 .map(this::toResponseDTO);
     }
 
+    /**
+     * Updates an existing user with the provided data.
+     *
+     * @param id the ID of the user to update
+     * @param dto the DTO containing update data
+     * @return the updated user as a response DTO
+     * @throws EntityNotFoundException if the user is not found
+     */
     @Override
     public UserResponseDTO update(Long id, UserUpdateDTO dto) {
         User user = Objects.requireNonNull(userRepository.findById(Objects.requireNonNull(id))
@@ -78,6 +117,12 @@ public class UserServiceImpl implements UserService {
         return toResponseDTO(updated);
     }
 
+    /**
+     * Deletes a user by its ID.
+     *
+     * @param id the ID of the user to delete
+     * @throws EntityNotFoundException if the user is not found
+     */
     @Override
     public void delete(Long id) {
         Long nonNullId = Objects.requireNonNull(id);
@@ -87,6 +132,13 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(nonNullId);
     }
 
+    /**
+     * Converts a User entity to a UserResponseDTO.
+     * Note: The password hash is never included in the response DTO.
+     *
+     * @param user the User entity to convert
+     * @return the corresponding response DTO
+     */
     @Override
     public UserResponseDTO toResponseDTO(User user) {
         return UserResponseDTO.builder()

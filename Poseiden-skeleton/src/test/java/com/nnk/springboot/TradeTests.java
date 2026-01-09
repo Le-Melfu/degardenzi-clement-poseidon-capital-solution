@@ -17,14 +17,14 @@ public class TradeTests {
 	@Autowired
 	private TradeRepository tradeRepository;
 
-	@Test
-	public void testCreate() {
-		Trade trade = new Trade("Trade Account", "Type");
-		trade = tradeRepository.save(trade);
-		Assertions.assertNotNull(trade.getId());
-		Assertions.assertTrue(trade.getAccount().equals("Trade Account"));
-		tradeRepository.delete(trade);
-	}
+    @Test
+    public void testCreate() {
+        Trade trade = new Trade("Trade Account", "Type");
+        trade = tradeRepository.save(trade);
+        Assertions.assertNotNull(trade.getId());
+        Assertions.assertEquals("Trade Account", trade.getAccount());
+        tradeRepository.delete(trade);
+    }
 
 	@Test
 	public void testRead() {
@@ -35,15 +35,15 @@ public class TradeTests {
 		tradeRepository.delete(trade);
 	}
 
-	@Test
-	public void testUpdate() {
-		Trade trade = new Trade("Trade Account", "Type");
-		trade = tradeRepository.save(trade);
-		trade.setAccount("Trade Account Update");
-		trade = tradeRepository.save(trade);
-		Assertions.assertTrue(trade.getAccount().equals("Trade Account Update"));
-		tradeRepository.delete(trade);
-	}
+    @Test
+    public void testUpdate() {
+        Trade trade = new Trade("Trade Account", "Type");
+        trade = tradeRepository.save(trade);
+        trade.setAccount("Trade Account Update");
+        trade = tradeRepository.save(trade);
+        Assertions.assertEquals("Trade Account Update", trade.getAccount());
+        tradeRepository.delete(trade);
+    }
 
 	@Test
 	public void testDelete() {

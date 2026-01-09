@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
 @Entity
 @Table(name = "rating")
 @NoArgsConstructor
@@ -37,7 +38,7 @@ public class Rating {
     @Column(name = "orderNumber", nullable = false)
     private Integer orderNumber;
 
-    // Convenience constructor used by tests
+    // Convenience constructor for tests
     public Rating(String moodysRating, String sandPRating, String fitchRating, Integer orderNumber) {
         this.moodysRating = moodysRating;
         this.sandPRating = sandPRating;

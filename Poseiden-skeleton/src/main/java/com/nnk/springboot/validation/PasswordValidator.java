@@ -15,24 +15,24 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
             return false;
         }
 
-        // Au moins 8 caractères
+        // At least 8 characters
         if (password.length() < 8) {
             return false;
         }
 
-        // Au moins une lettre majuscule
+        // At least one uppercase letter
         boolean hasUpperCase = password.chars().anyMatch(Character::isUpperCase);
         if (!hasUpperCase) {
             return false;
         }
 
-        // Au moins un chiffre
+        // At least one digit
         boolean hasDigit = password.chars().anyMatch(Character::isDigit);
         if (!hasDigit) {
             return false;
         }
 
-        // Au moins un symbole (caractère non alphanumérique)
+        // At least one symbol (non-alphanumeric character)
         boolean hasSymbol = password.chars().anyMatch(ch -> !Character.isLetterOrDigit(ch));
         if (!hasSymbol) {
             return false;

@@ -9,14 +9,9 @@ import org.springframework.data.domain.Pageable;
 
 public interface RuleNameService {
     RuleNameResponseDTO create(RuleNameCreateDTO dto);
-
     RuleNameResponseDTO findById(Long id);
-
     Page<RuleNameResponseDTO> findAll(Pageable pageable, String name);
-
     RuleNameResponseDTO update(Long id, RuleNameUpdateDTO dto);
-
     void delete(Long id);
-
     RuleNameResponseDTO toResponseDTO(RuleName ruleName);
 }
