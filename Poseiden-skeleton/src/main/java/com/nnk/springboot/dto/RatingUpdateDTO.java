@@ -1,5 +1,6 @@
 package com.nnk.springboot.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,7 @@ public class RatingUpdateDTO {
     private String fitchRating;
 
     @Positive(message = "Order number must be positive")
+    @Max(value = 127, message = "Order number must be between 1 and 127")
     private Integer orderNumber;
 }
 

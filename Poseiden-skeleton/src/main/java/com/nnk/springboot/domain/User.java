@@ -3,18 +3,12 @@ package com.nnk.springboot.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import com.nnk.springboot.validation.ValidPassword;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -25,7 +19,6 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString(exclude = "passwordHash")
-@EntityListeners(AuditingEntityListener.class)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +34,6 @@ public class User {
     private String passwordHash;
 
     @Transient
-    @ValidPassword
     private String password;
 
     @Column(name = "fullname")
@@ -59,12 +51,4 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.role = (roles != null && !roles.isEmpty()) ? roles.iterator().next() : Role.USER;
     }
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 }

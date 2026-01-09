@@ -19,24 +19,37 @@ public class CurvePointTests {
 	private CurvePointRepository curvePointRepository;
 
 	@Test
-	public void curvePointTest() {
+	public void testCreate() {
 		CurvePoint curvePoint = new CurvePoint(BigDecimal.valueOf(10), BigDecimal.valueOf(30));
-
-		// Save
 		curvePoint = curvePointRepository.save(curvePoint);
 		Assertions.assertNotNull(curvePoint.getId());
 		Assertions.assertEquals(0, curvePoint.getTerm().compareTo(BigDecimal.valueOf(10)));
+		curvePointRepository.delete(curvePoint);
+	}
 
-		// Update
+	@Test
+	public void testRead() {
+		CurvePoint curvePoint = new CurvePoint(BigDecimal.valueOf(10), BigDecimal.valueOf(30));
+		curvePoint = curvePointRepository.save(curvePoint);
+		List<CurvePoint> listResult = curvePointRepository.findAll();
+		Assertions.assertTrue(listResult.size() > 0);
+		curvePointRepository.delete(curvePoint);
+	}
+
+	@Test
+	public void testUpdate() {
+		CurvePoint curvePoint = new CurvePoint(BigDecimal.valueOf(10), BigDecimal.valueOf(30));
+		curvePoint = curvePointRepository.save(curvePoint);
 		curvePoint.setTerm(BigDecimal.valueOf(20));
 		curvePoint = curvePointRepository.save(curvePoint);
 		Assertions.assertEquals(0, curvePoint.getTerm().compareTo(BigDecimal.valueOf(20)));
+		curvePointRepository.delete(curvePoint);
+	}
 
-		// Find
-		List<CurvePoint> listResult = curvePointRepository.findAll();
-		Assertions.assertTrue(listResult.size() > 0);
-
-		// Delete
+	@Test
+	public void testDelete() {
+		CurvePoint curvePoint = new CurvePoint(BigDecimal.valueOf(10), BigDecimal.valueOf(30));
+		curvePoint = curvePointRepository.save(curvePoint);
 		Long id = Objects.requireNonNull(curvePoint.getId());
 		curvePointRepository.delete(curvePoint);
 		Optional<CurvePoint> curvePointList = curvePointRepository.findById(id);

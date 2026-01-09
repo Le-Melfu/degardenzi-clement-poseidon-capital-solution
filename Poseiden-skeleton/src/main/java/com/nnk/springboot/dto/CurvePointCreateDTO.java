@@ -1,5 +1,6 @@
 package com.nnk.springboot.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 public class CurvePointCreateDTO {
     @NotNull(message = "CurveId is mandatory")
     @Positive(message = "CurveId must be positive")
+    @Max(value = 127, message = "CurveId must be between 1 and 127")
     private Integer curveId;
 
     private LocalDateTime asOfDate;

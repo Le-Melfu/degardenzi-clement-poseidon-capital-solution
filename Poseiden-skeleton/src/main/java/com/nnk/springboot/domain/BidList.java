@@ -9,12 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bidlist")
@@ -24,7 +19,6 @@ import java.time.LocalDateTime;
 @ToString
 @Getter
 @Setter
-@EntityListeners(AuditingEntityListener.class)
 public class BidList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,14 +35,6 @@ public class BidList {
     @Positive(message = "Bid quantity must be positive")
     @Column(name = "bidQuantity")
     private BigDecimal bidQuantity;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     // Convenience constructor used by tests: (account, type, bidQuantity)
     public BidList(String account, String type, BigDecimal bidQuantity) {

@@ -9,12 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "rating")
 @NoArgsConstructor
@@ -23,7 +17,6 @@ import java.time.LocalDateTime;
 @ToString
 @Getter
 @Setter
-@EntityListeners(AuditingEntityListener.class)
 public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,14 +36,6 @@ public class Rating {
     @Positive(message = "Order number must be positive")
     @Column(name = "orderNumber", nullable = false)
     private Integer orderNumber;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     // Convenience constructor used by tests
     public Rating(String moodysRating, String sandPRating, String fitchRating, Integer orderNumber) {

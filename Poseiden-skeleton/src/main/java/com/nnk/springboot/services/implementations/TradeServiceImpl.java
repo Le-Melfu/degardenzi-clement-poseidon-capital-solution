@@ -118,8 +118,6 @@ public class TradeServiceImpl implements TradeService {
                 .buyQuantity(trade.getBuyQuantity())
                 .sellQuantity(trade.getSellQuantity())
                 .tradeDate(trade.getTradeDate())
-                .createdAt(trade.getCreatedAt())
-                .updatedAt(trade.getUpdatedAt())
                 .build();
     }
 }

@@ -110,8 +110,6 @@ public class CurvePointServiceImpl implements CurvePointService {
                 .asOfDate(curvePoint.getAsOfDate())
                 .term(curvePoint.getTerm())
                 .value(curvePoint.getValue())
-                .createdAt(curvePoint.getCreatedAt())
-                .updatedAt(curvePoint.getUpdatedAt())
                 .build();
     }
 }

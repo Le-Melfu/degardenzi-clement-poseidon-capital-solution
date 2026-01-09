@@ -18,7 +18,5 @@ public class CurvePointResponseDTO {
     private LocalDateTime asOfDate;
     private BigDecimal term;
     private BigDecimal value;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }
 

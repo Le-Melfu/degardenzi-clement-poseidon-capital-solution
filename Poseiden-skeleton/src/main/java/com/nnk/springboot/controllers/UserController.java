@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.validation.Valid;
 import com.nnk.springboot.domain.Role;
+import com.nnk.springboot.validation.PasswordValidator;
 import java.util.Objects;
 
 @Controller
@@ -39,6 +40,11 @@ public class UserController {
     public String validate(@Valid User user, BindingResult result, Model model) {
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
             result.rejectValue("password", "error.password", "Password is mandatory");
+        } else {
+            PasswordValidator validator = new PasswordValidator();
+            if (!validator.isValid(user.getPassword(), null)) {
+                result.rejectValue("password", "error.password", "Password must be at least 8 characters, contain at least one uppercase letter, one digit, and one symbol");
+            }
         }
         if (user.getUsername() != null && userRepository.existsByUsername(user.getUsername())) {
             result.rejectValue("username", "error.username", "Username already exists");
@@ -70,6 +76,12 @@ public class UserController {
     @SuppressWarnings("null")
     public String updateUser(@PathVariable("id") @NonNull Long id, @Valid User user,
             BindingResult result, Model model) {
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            PasswordValidator validator = new PasswordValidator();
+            if (!validator.isValid(user.getPassword(), null)) {
+                result.rejectValue("password", "error.password", "Password must be at least 8 characters, contain at least one uppercase letter, one digit, and one symbol");
+            }
+        }
         if (result.hasErrors()) {
             return "user/update";
         }

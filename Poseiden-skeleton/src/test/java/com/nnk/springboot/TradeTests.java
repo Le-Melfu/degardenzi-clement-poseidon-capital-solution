@@ -18,24 +18,37 @@ public class TradeTests {
 	private TradeRepository tradeRepository;
 
 	@Test
-	public void tradeTest() {
+	public void testCreate() {
 		Trade trade = new Trade("Trade Account", "Type");
-
-		// Save
 		trade = tradeRepository.save(trade);
 		Assertions.assertNotNull(trade.getId());
 		Assertions.assertTrue(trade.getAccount().equals("Trade Account"));
+		tradeRepository.delete(trade);
+	}
 
-		// Update
+	@Test
+	public void testRead() {
+		Trade trade = new Trade("Trade Account Read", "Type");
+		trade = tradeRepository.save(trade);
+		List<Trade> listResult = tradeRepository.findAll();
+		Assertions.assertTrue(listResult.size() > 0);
+		tradeRepository.delete(trade);
+	}
+
+	@Test
+	public void testUpdate() {
+		Trade trade = new Trade("Trade Account", "Type");
+		trade = tradeRepository.save(trade);
 		trade.setAccount("Trade Account Update");
 		trade = tradeRepository.save(trade);
 		Assertions.assertTrue(trade.getAccount().equals("Trade Account Update"));
+		tradeRepository.delete(trade);
+	}
 
-		// Find
-		List<Trade> listResult = tradeRepository.findAll();
-		Assertions.assertTrue(listResult.size() > 0);
-
-		// Delete
+	@Test
+	public void testDelete() {
+		Trade trade = new Trade("Trade Account", "Type");
+		trade = tradeRepository.save(trade);
 		Long id = Objects.requireNonNull(trade.getId());
 		tradeRepository.delete(trade);
 		Optional<Trade> tradeList = tradeRepository.findById(id);

@@ -5,8 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,7 +15,5 @@ public class RatingResponseDTO {
     private String sandPRating;
     private String fitchRating;
     private Integer orderNumber;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }
 

@@ -100,8 +100,6 @@ public class BidServiceImpl implements BidService {
                 .account(bid.getAccount())
                 .type(bid.getType())
                 .bidQuantity(bid.getBidQuantity())
-                .createdAt(bid.getCreatedAt())
-                .updatedAt(bid.getUpdatedAt())
                 .build();
     }
 }

@@ -19,7 +19,5 @@ public class TradeResponseDTO {
     private BigDecimal buyQuantity;
     private BigDecimal sellQuantity;
     private LocalDateTime tradeDate;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }
 

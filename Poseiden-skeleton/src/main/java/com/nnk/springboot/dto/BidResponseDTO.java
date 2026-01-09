@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -17,7 +16,4 @@ public class BidResponseDTO {
     private String account;
     private String type;
     private BigDecimal bidQuantity;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }
-

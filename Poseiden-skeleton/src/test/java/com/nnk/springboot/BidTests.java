@@ -19,24 +19,37 @@ public class BidTests {
 	private BidListRepository bidListRepository;
 
 	@Test
-	public void bidListTest() {
+	public void testCreate() {
 		BidList bid = new BidList("Account Test", "Type Test", BigDecimal.valueOf(10));
-
-		// Save
 		bid = bidListRepository.save(bid);
 		Assertions.assertNotNull(bid.getId());
 		Assertions.assertEquals(0, bid.getBidQuantity().compareTo(BigDecimal.valueOf(10)));
+		bidListRepository.delete(bid);
+	}
 
-		// Update
+	@Test
+	public void testRead() {
+		BidList bid = new BidList("Account Test", "Type Test", BigDecimal.valueOf(10));
+		bid = bidListRepository.save(bid);
+		List<BidList> listResult = bidListRepository.findAll();
+		Assertions.assertTrue(listResult.size() > 0);
+		bidListRepository.delete(bid);
+	}
+
+	@Test
+	public void testUpdate() {
+		BidList bid = new BidList("Account Test", "Type Test", BigDecimal.valueOf(10));
+		bid = bidListRepository.save(bid);
 		bid.setBidQuantity(BigDecimal.valueOf(20));
 		bid = bidListRepository.save(bid);
 		Assertions.assertEquals(0, bid.getBidQuantity().compareTo(BigDecimal.valueOf(20)));
+		bidListRepository.delete(bid);
+	}
 
-		// Find
-		List<BidList> listResult = bidListRepository.findAll();
-		Assertions.assertTrue(listResult.size() > 0);
-
-		// Delete
+	@Test
+	public void testDelete() {
+		BidList bid = new BidList("Account Test", "Type Test", BigDecimal.valueOf(10));
+		bid = bidListRepository.save(bid);
 		Long id = Objects.requireNonNull(bid.getId());
 		bidListRepository.delete(bid);
 		Optional<BidList> bidList = bidListRepository.findById(id);

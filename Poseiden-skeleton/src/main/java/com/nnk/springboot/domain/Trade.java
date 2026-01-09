@@ -9,10 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -24,7 +20,6 @@ import java.time.LocalDateTime;
 @ToString
 @Getter
 @Setter
-@EntityListeners(AuditingEntityListener.class)
 public class Trade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,14 +44,6 @@ public class Trade {
 
     @Column(name = "tradeDate")
     private LocalDateTime tradeDate;
-
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     // Convenience constructor used by tests: (account, type)
     public Trade(String account, String type) {

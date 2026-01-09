@@ -18,24 +18,37 @@ public class RuleTests {
 	private RuleNameRepository ruleNameRepository;
 
 	@Test
-	public void ruleTest() {
+	public void testCreate() {
 		RuleName rule = new RuleName("Rule Name", "Description", "Json", "Template", "SQL", "SQL Part");
-
-		// Save
 		rule = ruleNameRepository.save(rule);
 		Assertions.assertNotNull(rule.getId());
 		Assertions.assertEquals("Rule Name", rule.getName());
+		ruleNameRepository.delete(rule);
+	}
 
-		// Update
+	@Test
+	public void testRead() {
+		RuleName rule = new RuleName("Rule Name Read", "Description", "Json", "Template", "SQL", "SQL Part");
+		rule = ruleNameRepository.save(rule);
+		List<RuleName> listResult = ruleNameRepository.findAll();
+		Assertions.assertTrue(listResult.size() > 0);
+		ruleNameRepository.delete(rule);
+	}
+
+	@Test
+	public void testUpdate() {
+		RuleName rule = new RuleName("Rule Name", "Description", "Json", "Template", "SQL", "SQL Part");
+		rule = ruleNameRepository.save(rule);
 		rule.setName("Rule Name Update");
 		rule = ruleNameRepository.save(rule);
 		Assertions.assertEquals("Rule Name Update", rule.getName());
+		ruleNameRepository.delete(rule);
+	}
 
-		// Find
-		List<RuleName> listResult = ruleNameRepository.findAll();
-		Assertions.assertTrue(listResult.size() > 0);
-
-		// Delete
+	@Test
+	public void testDelete() {
+		RuleName rule = new RuleName("Rule Name", "Description", "Json", "Template", "SQL", "SQL Part");
+		rule = ruleNameRepository.save(rule);
 		Long id = Objects.requireNonNull(rule.getId());
 		ruleNameRepository.delete(rule);
 		Optional<RuleName> ruleList = ruleNameRepository.findById(id);

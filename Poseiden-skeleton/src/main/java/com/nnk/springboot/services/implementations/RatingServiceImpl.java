@@ -105,8 +105,6 @@ public class RatingServiceImpl implements RatingService {
                 .sandPRating(rating.getSandPRating())
                 .fitchRating(rating.getFitchRating())
                 .orderNumber(rating.getOrderNumber())
-                .createdAt(rating.getCreatedAt())
-                .updatedAt(rating.getUpdatedAt())
                 .build();
     }
 }

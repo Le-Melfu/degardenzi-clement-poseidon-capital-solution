@@ -127,8 +127,6 @@ public class RuleNameServiceImpl implements RuleNameService {
                 .sqlStr(ruleName.getSqlStr())
                 .sqlPart(ruleName.getSqlPart())
                 .enabled(ruleName.getEnabled())
-                .createdAt(ruleName.getCreatedAt())
-                .updatedAt(ruleName.getUpdatedAt())
                 .build();
     }
 }

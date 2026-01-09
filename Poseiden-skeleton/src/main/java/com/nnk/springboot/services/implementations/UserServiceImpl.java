@@ -94,8 +94,6 @@ public class UserServiceImpl implements UserService {
                 .username(user.getUsername())
                 .fullName(user.getFullName())
                 .role(user.getRole())
-                .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt())
                 .build();
     }
 }
