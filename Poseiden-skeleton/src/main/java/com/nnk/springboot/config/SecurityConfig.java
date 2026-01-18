@@ -74,7 +74,8 @@ public class SecurityConfig {
                                                 .sessionFixation().migrateSession()
                                                 .sessionConcurrency(concurrency -> concurrency
                                                                 .maximumSessions(1)
-                                                                .maxSessionsPreventsLogin(false)))
+                                                                .maxSessionsPreventsLogin(false)
+                                                                .expiredUrl("/app/login?expired=true")))
                                 .addFilterAfter(new com.nnk.springboot.config.CsrfCookieFilter(), CsrfFilter.class)
                                 .addFilterBefore(loginRequestLoggingFilter,
                                                 org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);

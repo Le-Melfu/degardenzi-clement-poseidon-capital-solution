@@ -15,8 +15,12 @@
     - Source root: src/main/java
     - View: src/main/resources
     - Static: src/main/resource/static
-4. Create database with name "demo" as configuration in application.properties
-5. Run sql script to create table doc/data.sql
+4. Configure environment variables:
+    - Copy `env.example` to `.env` at the root of the project
+    - Update the database credentials in `.env` file (DB_URL, DB_USERNAME, DB_PASSWORD)
+    - Alternatively, set these as system environment variables
+5. Create database with name "demo" as configuration in application.properties
+6. Run sql script to create table doc/data.sql
 
 ## Implement a Feature
 
