@@ -13,5 +13,6 @@ import lombok.NoArgsConstructor;
 public class UserUpdateDTO {
     private String fullName;
     private Role role;
+    private String password;
 }
 

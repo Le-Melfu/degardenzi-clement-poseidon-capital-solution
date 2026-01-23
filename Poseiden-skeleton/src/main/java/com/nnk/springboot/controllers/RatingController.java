@@ -1,7 +1,10 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Rating;
-import com.nnk.springboot.repositories.RatingRepository;
+import com.nnk.springboot.dto.RatingCreateDTO;
+import com.nnk.springboot.dto.RatingUpdateDTO;
+import com.nnk.springboot.services.interfaces.RatingService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,15 +18,15 @@ import jakarta.validation.Valid;
 
 @Controller
 public class RatingController {
-    private final RatingRepository ratingRepository;
+    private final RatingService ratingService;
 
-    public RatingController(RatingRepository ratingRepository) {
-        this.ratingRepository = ratingRepository;
+    public RatingController(RatingService ratingService) {
+        this.ratingService = ratingService;
     }
 
     @RequestMapping("/rating/list")
     public String home(Model model) {
-        model.addAttribute("ratings", ratingRepository.findAll());
+        model.addAttribute("ratings", ratingService.findAll(PageRequest.of(0, 1000), null).getContent());
         return "rating/list";
     }
 
@@ -35,7 +38,13 @@ public class RatingController {
     @PostMapping("/rating/validate")
     public String validate(@Valid Rating rating, BindingResult result, Model model) {
         if (!result.hasErrors()) {
-            ratingRepository.save(rating);
+            RatingCreateDTO dto = RatingCreateDTO.builder()
+                    .moodysRating(rating.getMoodysRating())
+                    .sandPRating(rating.getSandPRating())
+                    .fitchRating(rating.getFitchRating())
+                    .orderNumber(rating.getOrderNumber())
+                    .build();
+            ratingService.create(dto);
             return "redirect:/rating/list";
         }
         return "rating/add";
@@ -43,8 +52,14 @@ public class RatingController {
 
     @GetMapping("/rating/update/{id}")
     public String showUpdateForm(@PathVariable("id") @NonNull Long id, Model model) {
-        Rating rating = ratingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid rating Id:" + id));
+        var ratingResponse = ratingService.findById(id);
+        Rating rating = Rating.builder()
+                .id(ratingResponse.getId())
+                .moodysRating(ratingResponse.getMoodysRating())
+                .sandPRating(ratingResponse.getSandPRating())
+                .fitchRating(ratingResponse.getFitchRating())
+                .orderNumber(ratingResponse.getOrderNumber())
+                .build();
         model.addAttribute("rating", rating);
         return "rating/update";
     }
@@ -55,16 +70,19 @@ public class RatingController {
         if (result.hasErrors()) {
             return "rating/update";
         }
-        rating.setId(id);
-        ratingRepository.save(rating);
+        RatingUpdateDTO dto = RatingUpdateDTO.builder()
+                .moodysRating(rating.getMoodysRating())
+                .sandPRating(rating.getSandPRating())
+                .fitchRating(rating.getFitchRating())
+                .orderNumber(rating.getOrderNumber())
+                .build();
+        ratingService.update(id, dto);
         return "redirect:/rating/list";
     }
 
-    @GetMapping("/rating/delete/{id}")
+    @PostMapping("/rating/delete/{id}")
     public String deleteRating(@PathVariable("id") @NonNull Long id, Model model) {
-        Rating rating = ratingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid rating Id:" + id));
-        ratingRepository.delete(rating);
+        ratingService.delete(id);
         return "redirect:/rating/list";
     }
 }

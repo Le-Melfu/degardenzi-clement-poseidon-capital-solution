@@ -1,7 +1,10 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.CurvePoint;
-import com.nnk.springboot.repositories.CurvePointRepository;
+import com.nnk.springboot.dto.CurvePointCreateDTO;
+import com.nnk.springboot.dto.CurvePointUpdateDTO;
+import com.nnk.springboot.services.interfaces.CurvePointService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,15 +18,15 @@ import jakarta.validation.Valid;
 
 @Controller
 public class CurveController {
-    private final CurvePointRepository curvePointRepository;
+    private final CurvePointService curvePointService;
 
-    public CurveController(CurvePointRepository curvePointRepository) {
-        this.curvePointRepository = curvePointRepository;
+    public CurveController(CurvePointService curvePointService) {
+        this.curvePointService = curvePointService;
     }
 
     @RequestMapping("/curvePoint/list")
     public String home(Model model) {
-        model.addAttribute("curvePoints", curvePointRepository.findAll());
+        model.addAttribute("curvePoints", curvePointService.findAll(PageRequest.of(0, 1000), null, null).getContent());
         return "curvePoint/list";
     }
 
@@ -35,7 +38,13 @@ public class CurveController {
     @PostMapping("/curvePoint/validate")
     public String validate(@Valid CurvePoint curvePoint, BindingResult result, Model model) {
         if (!result.hasErrors()) {
-            curvePointRepository.save(curvePoint);
+            CurvePointCreateDTO dto = CurvePointCreateDTO.builder()
+                    .curveId(curvePoint.getCurveId())
+                    .asOfDate(curvePoint.getAsOfDate())
+                    .term(curvePoint.getTerm())
+                    .value(curvePoint.getValue())
+                    .build();
+            curvePointService.create(dto);
             return "redirect:/curvePoint/list";
         }
         return "curvePoint/add";
@@ -43,8 +52,14 @@ public class CurveController {
 
     @GetMapping("/curvePoint/update/{id}")
     public String showUpdateForm(@PathVariable("id") @NonNull Long id, Model model) {
-        CurvePoint curvePoint = curvePointRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid curve point Id:" + id));
+        var curvePointResponse = curvePointService.findById(id);
+        CurvePoint curvePoint = CurvePoint.builder()
+                .id(curvePointResponse.getId())
+                .curveId(curvePointResponse.getCurveId())
+                .asOfDate(curvePointResponse.getAsOfDate())
+                .term(curvePointResponse.getTerm())
+                .value(curvePointResponse.getValue())
+                .build();
         model.addAttribute("curvePoint", curvePoint);
         return "curvePoint/update";
     }
@@ -55,16 +70,19 @@ public class CurveController {
         if (result.hasErrors()) {
             return "curvePoint/update";
         }
-        curvePoint.setId(id);
-        curvePointRepository.save(curvePoint);
+        CurvePointUpdateDTO dto = CurvePointUpdateDTO.builder()
+                .curveId(curvePoint.getCurveId())
+                .asOfDate(curvePoint.getAsOfDate())
+                .term(curvePoint.getTerm())
+                .value(curvePoint.getValue())
+                .build();
+        curvePointService.update(id, dto);
         return "redirect:/curvePoint/list";
     }
 
-    @GetMapping("/curvePoint/delete/{id}")
+    @PostMapping("/curvePoint/delete/{id}")
     public String deleteCurvePoint(@PathVariable("id") @NonNull Long id, Model model) {
-        CurvePoint curvePoint = curvePointRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid curve point Id:" + id));
-        curvePointRepository.delete(curvePoint);
+        curvePointService.delete(id);
         return "redirect:/curvePoint/list";
     }
 }

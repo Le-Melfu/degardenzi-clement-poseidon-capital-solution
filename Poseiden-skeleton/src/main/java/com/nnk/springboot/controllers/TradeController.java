@@ -1,7 +1,10 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Trade;
-import com.nnk.springboot.repositories.TradeRepository;
+import com.nnk.springboot.dto.TradeCreateDTO;
+import com.nnk.springboot.dto.TradeUpdateDTO;
+import com.nnk.springboot.services.interfaces.TradeService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,15 +18,15 @@ import jakarta.validation.Valid;
 
 @Controller
 public class TradeController {
-    private final TradeRepository tradeRepository;
+    private final TradeService tradeService;
 
-    public TradeController(TradeRepository tradeRepository) {
-        this.tradeRepository = tradeRepository;
+    public TradeController(TradeService tradeService) {
+        this.tradeService = tradeService;
     }
 
     @RequestMapping("/trade/list")
     public String home(Model model) {
-        model.addAttribute("trades", tradeRepository.findAll());
+        model.addAttribute("trades", tradeService.findAll(PageRequest.of(0, 1000), null, null, null).getContent());
         return "trade/list";
     }
 
@@ -35,7 +38,14 @@ public class TradeController {
     @PostMapping("/trade/validate")
     public String validate(@Valid Trade trade, BindingResult result, Model model) {
         if (!result.hasErrors()) {
-            tradeRepository.save(trade);
+            TradeCreateDTO dto = TradeCreateDTO.builder()
+                    .account(trade.getAccount())
+                    .type(trade.getType())
+                    .buyQuantity(trade.getBuyQuantity())
+                    .sellQuantity(trade.getSellQuantity())
+                    .tradeDate(trade.getTradeDate())
+                    .build();
+            tradeService.create(dto);
             return "redirect:/trade/list";
         }
         return "trade/add";
@@ -43,8 +53,15 @@ public class TradeController {
 
     @GetMapping("/trade/update/{id}")
     public String showUpdateForm(@PathVariable("id") @NonNull Long id, Model model) {
-        Trade trade = tradeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid trade Id:" + id));
+        var tradeResponse = tradeService.findById(id);
+        Trade trade = Trade.builder()
+                .id(tradeResponse.getId())
+                .account(tradeResponse.getAccount())
+                .type(tradeResponse.getType())
+                .buyQuantity(tradeResponse.getBuyQuantity())
+                .sellQuantity(tradeResponse.getSellQuantity())
+                .tradeDate(tradeResponse.getTradeDate())
+                .build();
         model.addAttribute("trade", trade);
         return "trade/update";
     }
@@ -55,16 +72,20 @@ public class TradeController {
         if (result.hasErrors()) {
             return "trade/update";
         }
-        trade.setId(id);
-        tradeRepository.save(trade);
+        TradeUpdateDTO dto = TradeUpdateDTO.builder()
+                .account(trade.getAccount())
+                .type(trade.getType())
+                .buyQuantity(trade.getBuyQuantity())
+                .sellQuantity(trade.getSellQuantity())
+                .tradeDate(trade.getTradeDate())
+                .build();
+        tradeService.update(id, dto);
         return "redirect:/trade/list";
     }
 
-    @GetMapping("/trade/delete/{id}")
+    @PostMapping("/trade/delete/{id}")
     public String deleteTrade(@PathVariable("id") @NonNull Long id, Model model) {
-        Trade trade = tradeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid trade Id:" + id));
-        tradeRepository.delete(trade);
+        tradeService.delete(id);
         return "redirect:/trade/list";
     }
 }

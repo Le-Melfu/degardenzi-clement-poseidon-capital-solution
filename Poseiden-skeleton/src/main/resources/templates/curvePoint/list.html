@@ -57,10 +57,10 @@
                                     th:href="@{/curvePoint/update/{id}(id=${curvePoint.id})}"
                                     >Edit</a
                                 >&nbsp;|&nbsp;
-                                <a
-                                    th:href="@{/curvePoint/delete/{id}(id=${curvePoint.id})}"
-                                    >Delete</a
-                                >
+                                <form th:action="@{/curvePoint/delete/{id}(id=${curvePoint.id})}" method="POST" style="display: inline;">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <button type="submit" class="btn btn-link" style="padding: 0; border: none; color: #007bff; text-decoration: underline; cursor: pointer;">Delete</button>
+                                </form>
                             </td>
                         </tr>
                     </tbody>

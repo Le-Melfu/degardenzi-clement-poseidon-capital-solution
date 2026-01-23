@@ -52,10 +52,10 @@
                                     th:href="@{/bidList/update/{id}(id=${bid.id})}"
                                     >Edit</a
                                 >&nbsp;|&nbsp;
-                                <a
-                                    th:href="@{/bidList/delete/{id}(id=${bid.id})}"
-                                    >Delete</a
-                                >
+                                <form th:action="@{/bidList/delete/{id}(id=${bid.id})}" method="POST" style="display: inline;">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <button type="submit" class="btn btn-link" style="padding: 0; border: none; color: #007bff; text-decoration: underline; cursor: pointer;">Delete</button>
+                                </form>
                             </td>
                         </tr>
                     </tbody>

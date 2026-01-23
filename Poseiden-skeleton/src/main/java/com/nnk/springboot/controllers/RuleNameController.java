@@ -1,7 +1,10 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.RuleName;
-import com.nnk.springboot.repositories.RuleNameRepository;
+import com.nnk.springboot.dto.RuleNameCreateDTO;
+import com.nnk.springboot.dto.RuleNameUpdateDTO;
+import com.nnk.springboot.services.interfaces.RuleNameService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,15 +18,15 @@ import jakarta.validation.Valid;
 
 @Controller
 public class RuleNameController {
-    private final RuleNameRepository ruleNameRepository;
+    private final RuleNameService ruleNameService;
 
-    public RuleNameController(RuleNameRepository ruleNameRepository) {
-        this.ruleNameRepository = ruleNameRepository;
+    public RuleNameController(RuleNameService ruleNameService) {
+        this.ruleNameService = ruleNameService;
     }
 
     @RequestMapping("/ruleName/list")
     public String home(Model model) {
-        model.addAttribute("ruleNames", ruleNameRepository.findAll());
+        model.addAttribute("ruleNames", ruleNameService.findAll(PageRequest.of(0, 1000), null).getContent());
         return "ruleName/list";
     }
 
@@ -36,7 +39,16 @@ public class RuleNameController {
     @PostMapping("/ruleName/validate")
     public String validate(@Valid RuleName ruleName, BindingResult result, Model model) {
         if (!result.hasErrors()) {
-            ruleNameRepository.save(ruleName);
+            RuleNameCreateDTO dto = RuleNameCreateDTO.builder()
+                    .name(ruleName.getName())
+                    .description(ruleName.getDescription())
+                    .json(ruleName.getJson())
+                    .template(ruleName.getTemplate())
+                    .sqlStr(ruleName.getSqlStr())
+                    .sqlPart(ruleName.getSqlPart())
+                    .enabled(ruleName.getEnabled())
+                    .build();
+            ruleNameService.create(dto);
             return "redirect:/ruleName/list";
         }
         return "ruleName/add";
@@ -44,8 +56,17 @@ public class RuleNameController {
 
     @GetMapping("/ruleName/update/{id}")
     public String showUpdateForm(@PathVariable("id") @NonNull Long id, Model model) {
-        RuleName ruleName = ruleNameRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid rule name Id:" + id));
+        var ruleNameResponse = ruleNameService.findById(id);
+        RuleName ruleName = RuleName.builder()
+                .id(ruleNameResponse.getId())
+                .name(ruleNameResponse.getName())
+                .description(ruleNameResponse.getDescription())
+                .json(ruleNameResponse.getJson())
+                .template(ruleNameResponse.getTemplate())
+                .sqlStr(ruleNameResponse.getSqlStr())
+                .sqlPart(ruleNameResponse.getSqlPart())
+                .enabled(ruleNameResponse.getEnabled())
+                .build();
         model.addAttribute("ruleName", ruleName);
         return "ruleName/update";
     }
@@ -56,16 +77,22 @@ public class RuleNameController {
         if (result.hasErrors()) {
             return "ruleName/update";
         }
-        ruleName.setId(id);
-        ruleNameRepository.save(ruleName);
+        RuleNameUpdateDTO dto = RuleNameUpdateDTO.builder()
+                .name(ruleName.getName())
+                .description(ruleName.getDescription())
+                .json(ruleName.getJson())
+                .template(ruleName.getTemplate())
+                .sqlStr(ruleName.getSqlStr())
+                .sqlPart(ruleName.getSqlPart())
+                .enabled(ruleName.getEnabled())
+                .build();
+        ruleNameService.update(id, dto);
         return "redirect:/ruleName/list";
     }
 
-    @GetMapping("/ruleName/delete/{id}")
+    @PostMapping("/ruleName/delete/{id}")
     public String deleteRuleName(@PathVariable("id") @NonNull Long id, Model model) {
-        RuleName ruleName = ruleNameRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid rule name Id:" + id));
-        ruleNameRepository.delete(ruleName);
+        ruleNameService.delete(id);
         return "redirect:/ruleName/list";
     }
 }

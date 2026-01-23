@@ -47,7 +47,10 @@
 					<td th:text="${trade.buyQuantity}"></td>
 					<td style="width: 15%" class="text-center">
 						<a th:href="@{/trade/update/{id}(id=${trade.id})}">Edit</a>&nbsp;|&nbsp;
-						<a th:href="@{/trade/delete/{id}(id=${trade.id})}">Delete</a>
+						<form th:action="@{/trade/delete/{id}(id=${trade.id})}" method="POST" style="display: inline;">
+							<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+							<button type="submit" class="btn btn-link" style="padding: 0; border: none; color: #007bff; text-decoration: underline; cursor: pointer;">Delete</button>
+						</form>
 					</td>
 				</tr>
 			</tbody>

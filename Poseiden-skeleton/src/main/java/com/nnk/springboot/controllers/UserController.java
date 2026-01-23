@@ -1,8 +1,12 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.User;
-import com.nnk.springboot.repositories.UserRepository;
+import com.nnk.springboot.dto.UserCreateDTO;
+import com.nnk.springboot.dto.UserUpdateDTO;
+import com.nnk.springboot.services.interfaces.UserService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.NonNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,28 +22,31 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Controller
 public class UserController {
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final PasswordValidator passwordValidator;
 
-    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, PasswordValidator passwordValidator) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService, PasswordEncoder passwordEncoder, PasswordValidator passwordValidator) {
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.passwordValidator = passwordValidator;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping("/user/list")
     public String home(Model model) {
-        model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("users", userService.findAll(PageRequest.of(0, 1000)).getContent());
         return "user/list";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/user/add")
     public String addUserForm(Model model) {
         model.addAttribute("user", new User());
         return "user/add";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/user/validate")
     public String validate(@Valid User user, BindingResult result, Model model) {
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
@@ -49,30 +56,39 @@ public class UserController {
                 result.rejectValue("password", "error.password", "Password must be at least 8 characters, contain at least one uppercase letter, one digit, and one symbol");
             }
         }
-        if (user.getUsername() != null && userRepository.existsByUsername(user.getUsername())) {
+        if (user.getUsername() != null && userService.findAll(PageRequest.of(0, 1000)).getContent().stream()
+                .anyMatch(u -> u.getUsername().equals(user.getUsername()))) {
             result.rejectValue("username", "error.username", "Username already exists");
         }
         if (!result.hasErrors()) {
-            user.setPasswordHash(passwordEncoder.encode(user.getPassword()));
-            user.setPassword(null);
-            if (user.getRole() == null) {
-                user.setRole(Role.USER);
-            }
-            userRepository.save(user);
+            UserCreateDTO dto = UserCreateDTO.builder()
+                    .username(user.getUsername())
+                    .password(user.getPassword())
+                    .fullName(user.getFullName())
+                    .role(user.getRole() != null ? user.getRole() : Role.USER)
+                    .build();
+            userService.create(dto);
             return "redirect:/user/list";
         }
         return "user/add";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/user/update/{id}")
     public String showUpdateForm(@PathVariable("id") @NonNull Long id, Model model) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
-        user.setPassword("");
+        var userResponse = userService.findById(id);
+        User user = User.builder()
+                .id(userResponse.getId())
+                .username(userResponse.getUsername())
+                .fullName(userResponse.getFullName())
+                .role(userResponse.getRole())
+                .password("")
+                .build();
         model.addAttribute("user", user);
         return "user/update";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/user/update/{id}")
     public String updateUser(@PathVariable("id") @NonNull Long id, @Valid User user,
             BindingResult result, Model model) {
@@ -85,28 +101,19 @@ public class UserController {
             return "user/update";
         }
 
-        User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
-
-        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
-            existingUser.setPasswordHash(passwordEncoder.encode(user.getPassword()));
-        }
-        if (user.getFullName() != null) {
-            existingUser.setFullName(user.getFullName());
-        }
-        if (user.getRole() != null) {
-            existingUser.setRole(user.getRole());
-        }
-
-        userRepository.save(existingUser);
+        UserUpdateDTO dto = UserUpdateDTO.builder()
+                .fullName(user.getFullName())
+                .role(user.getRole())
+                .password(user.getPassword() != null && !user.getPassword().isEmpty() ? user.getPassword() : null)
+                .build();
+        userService.update(id, dto);
         return "redirect:/user/list";
     }
 
-    @GetMapping("/user/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/user/delete/{id}")
     public String deleteUser(@PathVariable("id") @NonNull Long id, Model model) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
-        userRepository.delete(user);
+        userService.delete(id);
         return "redirect:/user/list";
     }
 }

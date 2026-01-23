@@ -1,7 +1,10 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.BidList;
-import com.nnk.springboot.repositories.BidListRepository;
+import com.nnk.springboot.dto.BidCreateDTO;
+import com.nnk.springboot.dto.BidUpdateDTO;
+import com.nnk.springboot.services.interfaces.BidService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,10 +22,10 @@ import jakarta.validation.Valid;
  */
 @Controller
 public class BidListController {
-    private final BidListRepository bidListRepository;
+    private final BidService bidService;
 
-    public BidListController(BidListRepository bidListRepository) {
-        this.bidListRepository = bidListRepository;
+    public BidListController(BidService bidService) {
+        this.bidService = bidService;
     }
 
     /**
@@ -33,7 +36,7 @@ public class BidListController {
      */
     @RequestMapping("/bidList/list")
     public String home(Model model) {
-        model.addAttribute("bids", bidListRepository.findAll());
+        model.addAttribute("bids", bidService.findAll(PageRequest.of(0, 1000), null).getContent());
         return "bidList/list";
     }
 
@@ -59,7 +62,12 @@ public class BidListController {
     @PostMapping("/bidList/validate")
     public String validate(@Valid BidList bid, BindingResult result, Model model) {
         if (!result.hasErrors()) {
-            bidListRepository.save(bid);
+            BidCreateDTO dto = BidCreateDTO.builder()
+                    .account(bid.getAccount())
+                    .type(bid.getType())
+                    .bidQuantity(bid.getBidQuantity())
+                    .build();
+            bidService.create(dto);
             return "redirect:/bidList/list";
         }
         return "bidList/add";
@@ -75,8 +83,13 @@ public class BidListController {
      */
     @GetMapping("/bidList/update/{id}")
     public String showUpdateForm(@PathVariable("id") @NonNull Long id, Model model) {
-        BidList bid = bidListRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid bid Id:" + id));
+        var bidResponse = bidService.findById(id);
+        BidList bid = BidList.builder()
+                .id(bidResponse.getId())
+                .account(bidResponse.getAccount())
+                .type(bidResponse.getType())
+                .bidQuantity(bidResponse.getBidQuantity())
+                .build();
         model.addAttribute("bidList", bid);
         return "bidList/update";
     }
@@ -96,8 +109,12 @@ public class BidListController {
         if (result.hasErrors()) {
             return "bidList/update";
         }
-        bidList.setId(id);
-        bidListRepository.save(bidList);
+        BidUpdateDTO dto = BidUpdateDTO.builder()
+                .account(bidList.getAccount())
+                .type(bidList.getType())
+                .bidQuantity(bidList.getBidQuantity())
+                .build();
+        bidService.update(id, dto);
         return "redirect:/bidList/list";
     }
 
@@ -109,11 +126,9 @@ public class BidListController {
      * @return redirect to list page
      * @throws IllegalArgumentException if the bid ID is invalid
      */
-    @GetMapping("/bidList/delete/{id}")
+    @PostMapping("/bidList/delete/{id}")
     public String deleteBid(@PathVariable("id") @NonNull Long id, Model model) {
-        BidList bid = bidListRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid bid Id:" + id));
-        bidListRepository.delete(bid);
+        bidService.delete(id);
         return "redirect:/bidList/list";
     }
 }
