@@ -1,9 +1,9 @@
 package com.nnk.springboot.services.implementations;
 
 import com.nnk.springboot.domain.Trade;
-import com.nnk.springboot.dto.TradeCreateDTO;
-import com.nnk.springboot.dto.TradeResponseDTO;
-import com.nnk.springboot.dto.TradeUpdateDTO;
+import com.nnk.springboot.dto.trade.TradeCreateDTO;
+import com.nnk.springboot.dto.trade.TradeResponseDTO;
+import com.nnk.springboot.dto.trade.TradeUpdateDTO;
 import com.nnk.springboot.exception.EntityNotFoundException;
 import com.nnk.springboot.repositories.TradeRepository;
 import com.nnk.springboot.services.interfaces.TradeService;
@@ -45,7 +45,6 @@ public class TradeServiceImpl implements TradeService {
      * @return the created trade as a response DTO
      */
     @Override
-    @SuppressWarnings("null")
     public TradeResponseDTO create(TradeCreateDTO dto) {
         Trade trade = Trade.builder()
                 .account(dto.getAccount())
@@ -74,18 +73,25 @@ public class TradeServiceImpl implements TradeService {
         return toResponseDTO(trade);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Trade getForUpdateForm(Long id) {
+        return findById(id).toTrade();
+    }
+
     /**
      * Retrieves all trades with optional filtering by account and date range.
      *
-     * @param pageable pagination information
-     * @param account optional account filter (can be null)
+     * @param pageable  pagination information
+     * @param account   optional account filter (can be null)
      * @param startDate optional start date for filtering (can be null)
-     * @param endDate optional end date for filtering (can be null)
+     * @param endDate   optional end date for filtering (can be null)
      * @return a page of trade response DTOs
      */
     @Override
     @Transactional(readOnly = true)
-    public Page<TradeResponseDTO> findAll(Pageable pageable, String account, LocalDateTime startDate, LocalDateTime endDate) {
+    public Page<TradeResponseDTO> findAll(Pageable pageable, String account, LocalDateTime startDate,
+            LocalDateTime endDate) {
         Objects.requireNonNull(pageable);
         Specification<Trade> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -109,7 +115,7 @@ public class TradeServiceImpl implements TradeService {
     /**
      * Updates an existing trade with the provided data.
      *
-     * @param id the ID of the trade to update
+     * @param id  the ID of the trade to update
      * @param dto the DTO containing update data
      * @return the updated trade as a response DTO
      * @throws EntityNotFoundException if the trade is not found
@@ -172,4 +178,3 @@ public class TradeServiceImpl implements TradeService {
                 .build();
     }
 }
-

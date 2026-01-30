@@ -1,9 +1,9 @@
 package com.nnk.springboot.services.implementations;
 
 import com.nnk.springboot.domain.RuleName;
-import com.nnk.springboot.dto.RuleNameCreateDTO;
-import com.nnk.springboot.dto.RuleNameResponseDTO;
-import com.nnk.springboot.dto.RuleNameUpdateDTO;
+import com.nnk.springboot.dto.rulename.RuleNameCreateDTO;
+import com.nnk.springboot.dto.rulename.RuleNameResponseDTO;
+import com.nnk.springboot.dto.rulename.RuleNameUpdateDTO;
 import com.nnk.springboot.exception.EntityNotFoundException;
 import com.nnk.springboot.repositories.RuleNameRepository;
 import com.nnk.springboot.services.interfaces.RuleNameService;
@@ -45,7 +45,6 @@ public class RuleNameServiceImpl implements RuleNameService {
      * @throws IllegalArgumentException if a rule with the same name already exists
      */
     @Override
-    @SuppressWarnings("null")
     public RuleNameResponseDTO create(RuleNameCreateDTO dto) {
         if (ruleNameRepository.existsByName(dto.getName())) {
             throw new IllegalArgumentException("Rule name already exists: " + dto.getName());
@@ -80,11 +79,18 @@ public class RuleNameServiceImpl implements RuleNameService {
         return toResponseDTO(ruleName);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public RuleName getForUpdateForm(Long id) {
+        return findById(id).toRuleName();
+    }
+
     /**
-     * Retrieves all rule names with optional filtering by name (case-insensitive partial match).
+     * Retrieves all rule names with optional filtering by name (case-insensitive
+     * partial match).
      *
      * @param pageable pagination information
-     * @param name optional name filter for partial matching (can be null)
+     * @param name     optional name filter for partial matching (can be null)
      * @return a page of rule name response DTOs
      */
     @Override
@@ -106,10 +112,10 @@ public class RuleNameServiceImpl implements RuleNameService {
     /**
      * Updates an existing rule name with the provided data.
      *
-     * @param id the ID of the rule name to update
+     * @param id  the ID of the rule name to update
      * @param dto the DTO containing update data
      * @return the updated rule name as a response DTO
-     * @throws EntityNotFoundException if the rule name is not found
+     * @throws EntityNotFoundException  if the rule name is not found
      * @throws IllegalArgumentException if the new name already exists
      */
     @Override
@@ -181,4 +187,3 @@ public class RuleNameServiceImpl implements RuleNameService {
                 .build();
     }
 }
-

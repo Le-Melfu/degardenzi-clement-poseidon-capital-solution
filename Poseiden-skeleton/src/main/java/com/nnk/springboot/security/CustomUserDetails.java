@@ -1,4 +1,4 @@
-package com.nnk.springboot.services;
+package com.nnk.springboot.security;
 
 import com.nnk.springboot.domain.Role;
 import com.nnk.springboot.domain.User;
@@ -56,12 +56,7 @@ public class CustomUserDetails implements UserDetails {
         return true;
     }
 
-    public User getUser() {
-        return user;
-    }
-
     public Long getUserId() {
         return user.getId();
     }
 }
-

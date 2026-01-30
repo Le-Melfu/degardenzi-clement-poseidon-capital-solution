@@ -1,4 +1,4 @@
-package com.nnk.springboot.config;
+package com.nnk.springboot.security;
 
 import com.nnk.springboot.services.LoggerService;
 import jakarta.servlet.ServletException;
@@ -25,8 +25,8 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException, ServletException {
         String username = request.getParameter("username");
-        logger.w("Authentication failed for user: {} - {}", username != null ? username : "unknown", exception.getMessage());
+        logger.w("Authentication failed for user: {} - {}", username != null ? username : "unknown",
+                "Invalid username or password");
         super.onAuthenticationFailure(request, response, exception);
     }
 }
-

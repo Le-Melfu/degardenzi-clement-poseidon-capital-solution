@@ -1,4 +1,4 @@
-package com.nnk.springboot.config;
+package com.nnk.springboot.security;
 
 import com.nnk.springboot.services.LoggerService;
 import jakarta.servlet.FilterChain;
@@ -25,16 +25,15 @@ public class LoginRequestLoggingFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        
+
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
-        
+
         if ("/login".equals(requestURI) && "POST".equals(method)) {
             String username = request.getParameter("username");
             logger.i("Login attempt for user: {}", username != null ? username : "unknown");
         }
-        
+
         filterChain.doFilter(request, response);
     }
 }
-

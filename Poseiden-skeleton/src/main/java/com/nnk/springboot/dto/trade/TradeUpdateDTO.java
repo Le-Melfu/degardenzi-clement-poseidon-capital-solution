@@ -1,6 +1,5 @@
-package com.nnk.springboot.dto;
+package com.nnk.springboot.dto.trade;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,11 +13,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TradeCreateDTO {
-    @NotBlank(message = "Account is mandatory")
+public class TradeUpdateDTO {
     private String account;
 
-    @NotBlank(message = "Type is mandatory")
     private String type;
 
     @PositiveOrZero(message = "Buy quantity must be positive or zero")
@@ -29,4 +26,3 @@ public class TradeCreateDTO {
 
     private LocalDateTime tradeDate;
 }
-

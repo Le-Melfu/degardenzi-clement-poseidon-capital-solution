@@ -1,9 +1,9 @@
 package com.nnk.springboot.services.implementations;
 
 import com.nnk.springboot.domain.CurvePoint;
-import com.nnk.springboot.dto.CurvePointCreateDTO;
-import com.nnk.springboot.dto.CurvePointResponseDTO;
-import com.nnk.springboot.dto.CurvePointUpdateDTO;
+import com.nnk.springboot.dto.curvepoint.CurvePointCreateDTO;
+import com.nnk.springboot.dto.curvepoint.CurvePointResponseDTO;
+import com.nnk.springboot.dto.curvepoint.CurvePointUpdateDTO;
 import com.nnk.springboot.exception.EntityNotFoundException;
 import com.nnk.springboot.repositories.CurvePointRepository;
 import com.nnk.springboot.services.interfaces.CurvePointService;
@@ -45,7 +45,6 @@ public class CurvePointServiceImpl implements CurvePointService {
      * @return the created curve point as a response DTO
      */
     @Override
-    @SuppressWarnings("null")
     public CurvePointResponseDTO create(CurvePointCreateDTO dto) {
         CurvePoint curvePoint = CurvePoint.builder()
                 .curveId(dto.getCurveId())
@@ -73,12 +72,18 @@ public class CurvePointServiceImpl implements CurvePointService {
         return toResponseDTO(curvePoint);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public CurvePoint getForUpdateForm(Long id) {
+        return findById(id).toCurvePoint();
+    }
+
     /**
      * Retrieves all curve points with optional filtering by date range.
      *
-     * @param pageable pagination information
+     * @param pageable  pagination information
      * @param startDate optional start date for filtering (can be null)
-     * @param endDate optional end date for filtering (can be null)
+     * @param endDate   optional end date for filtering (can be null)
      * @return a page of curve point response DTOs
      */
     @Override
@@ -104,7 +109,7 @@ public class CurvePointServiceImpl implements CurvePointService {
     /**
      * Updates an existing curve point with the provided data.
      *
-     * @param id the ID of the curve point to update
+     * @param id  the ID of the curve point to update
      * @param dto the DTO containing update data
      * @return the updated curve point as a response DTO
      * @throws EntityNotFoundException if the curve point is not found

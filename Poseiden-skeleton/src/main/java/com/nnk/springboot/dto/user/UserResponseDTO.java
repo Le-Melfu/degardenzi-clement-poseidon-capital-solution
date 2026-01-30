@@ -1,4 +1,4 @@
-package com.nnk.springboot.dto;
+package com.nnk.springboot.dto.user;
 
 import com.nnk.springboot.domain.Role;
 import lombok.AllArgsConstructor;
@@ -16,4 +16,3 @@ public class UserResponseDTO {
     private String fullName;
     private Role role;
 }
-

@@ -1,5 +1,6 @@
-package com.nnk.springboot.dto;
+package com.nnk.springboot.dto.rulename;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RuleNameUpdateDTO {
+public class RuleNameCreateDTO {
+    @NotBlank(message = "Name is mandatory")
     private String name;
 
     private String description;

@@ -1,8 +1,8 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.RuleName;
-import com.nnk.springboot.dto.RuleNameCreateDTO;
-import com.nnk.springboot.dto.RuleNameUpdateDTO;
+import com.nnk.springboot.dto.rulename.RuleNameCreateDTO;
+import com.nnk.springboot.dto.rulename.RuleNameUpdateDTO;
 import com.nnk.springboot.services.interfaces.RuleNameService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.NonNull;
@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.validation.Valid;
 
+/**
+ * Controller for RuleName CRUD operations.
+ */
 @Controller
 public class RuleNameController {
     private final RuleNameService ruleNameService;
@@ -24,18 +27,21 @@ public class RuleNameController {
         this.ruleNameService = ruleNameService;
     }
 
+    /** Displays the list of all rule names. */
     @RequestMapping("/ruleName/list")
     public String home(Model model) {
         model.addAttribute("ruleNames", ruleNameService.findAll(PageRequest.of(0, 1000), null).getContent());
         return "ruleName/list";
     }
 
+    /** Displays the form to add a new rule name. */
     @GetMapping("/ruleName/add")
     public String addRuleForm(RuleName ruleName, Model model) {
         model.addAttribute("ruleName", ruleName);
         return "ruleName/add";
     }
 
+    /** Validates and saves a new rule name. */
     @PostMapping("/ruleName/validate")
     public String validate(@Valid RuleName ruleName, BindingResult result, Model model) {
         if (!result.hasErrors()) {
@@ -54,23 +60,14 @@ public class RuleNameController {
         return "ruleName/add";
     }
 
+    /** Displays the form to update an existing rule name. */
     @GetMapping("/ruleName/update/{id}")
     public String showUpdateForm(@PathVariable("id") @NonNull Long id, Model model) {
-        var ruleNameResponse = ruleNameService.findById(id);
-        RuleName ruleName = RuleName.builder()
-                .id(ruleNameResponse.getId())
-                .name(ruleNameResponse.getName())
-                .description(ruleNameResponse.getDescription())
-                .json(ruleNameResponse.getJson())
-                .template(ruleNameResponse.getTemplate())
-                .sqlStr(ruleNameResponse.getSqlStr())
-                .sqlPart(ruleNameResponse.getSqlPart())
-                .enabled(ruleNameResponse.getEnabled())
-                .build();
-        model.addAttribute("ruleName", ruleName);
+        model.addAttribute("ruleName", ruleNameService.getForUpdateForm(id));
         return "ruleName/update";
     }
 
+    /** Updates an existing rule name. */
     @PostMapping("/ruleName/update/{id}")
     public String updateRuleName(@PathVariable("id") @NonNull Long id, @Valid RuleName ruleName,
             BindingResult result, Model model) {
@@ -90,8 +87,9 @@ public class RuleNameController {
         return "redirect:/ruleName/list";
     }
 
+    /** Deletes a rule name by its ID. */
     @PostMapping("/ruleName/delete/{id}")
-    public String deleteRuleName(@PathVariable("id") @NonNull Long id, Model model) {
+    public String deleteRuleName(@PathVariable("id") @NonNull Long id) {
         ruleNameService.delete(id);
         return "redirect:/ruleName/list";
     }

@@ -1,4 +1,4 @@
-package com.nnk.springboot.dto;
+package com.nnk.springboot.dto.bidlist;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -22,4 +22,3 @@ public class BidCreateDTO {
     @Positive(message = "Bid quantity must be positive")
     private BigDecimal bidQuantity;
 }
-

@@ -1,4 +1,4 @@
-package com.nnk.springboot.dto;
+package com.nnk.springboot.dto.user;
 
 import com.nnk.springboot.domain.Role;
 import com.nnk.springboot.validation.ValidPassword;
@@ -26,4 +26,3 @@ public class UserCreateDTO {
 
     private Role role;
 }
-

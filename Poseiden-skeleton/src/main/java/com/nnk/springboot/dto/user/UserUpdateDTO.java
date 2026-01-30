@@ -1,4 +1,4 @@
-package com.nnk.springboot.dto;
+package com.nnk.springboot.dto.user;
 
 import com.nnk.springboot.domain.Role;
 import lombok.AllArgsConstructor;
@@ -15,4 +15,3 @@ public class UserUpdateDTO {
     private Role role;
     private String password;
 }
-

@@ -1,13 +1,14 @@
-package com.nnk.springboot.config;
+package com.nnk.springboot.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.web.filter.OncePerRequestFilter;
-import java.io.IOException;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.lang.NonNull;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
 
 public class CsrfCookieFilter extends OncePerRequestFilter {
     @Override

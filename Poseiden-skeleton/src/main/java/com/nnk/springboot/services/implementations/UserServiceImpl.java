@@ -2,9 +2,9 @@ package com.nnk.springboot.services.implementations;
 
 import com.nnk.springboot.domain.Role;
 import com.nnk.springboot.domain.User;
-import com.nnk.springboot.dto.UserCreateDTO;
-import com.nnk.springboot.dto.UserResponseDTO;
-import com.nnk.springboot.dto.UserUpdateDTO;
+import com.nnk.springboot.dto.user.UserCreateDTO;
+import com.nnk.springboot.dto.user.UserResponseDTO;
+import com.nnk.springboot.dto.user.UserUpdateDTO;
 import com.nnk.springboot.exception.EntityNotFoundException;
 import com.nnk.springboot.repositories.UserRepository;
 import com.nnk.springboot.services.interfaces.UserService;
@@ -28,9 +28,10 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * Constructs a new UserServiceImpl with the given repository and password encoder.
+     * Constructs a new UserServiceImpl with the given repository and password
+     * encoder.
      *
-     * @param userRepository the repository for User entities
+     * @param userRepository  the repository for User entities
      * @param passwordEncoder the password encoder for hashing passwords
      */
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -47,7 +48,6 @@ public class UserServiceImpl implements UserService {
      * @throws IllegalArgumentException if the username already exists
      */
     @Override
-    @SuppressWarnings("null")
     public UserResponseDTO create(UserCreateDTO dto) {
         if (userRepository.existsByUsername(dto.getUsername())) {
             throw new IllegalArgumentException("Username already exists: " + dto.getUsername());
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Updates an existing user with the provided data.
      *
-     * @param id the ID of the user to update
+     * @param id  the ID of the user to update
      * @param dto the DTO containing update data
      * @return the updated user as a response DTO
      * @throws EntityNotFoundException if the user is not found

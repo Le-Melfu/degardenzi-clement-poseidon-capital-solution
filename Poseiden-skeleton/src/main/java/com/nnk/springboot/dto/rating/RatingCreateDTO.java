@@ -1,4 +1,4 @@
-package com.nnk.springboot.dto;
+package com.nnk.springboot.dto.rating;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
@@ -24,4 +24,3 @@ public class RatingCreateDTO {
     @Max(value = 127, message = "Order number must be between 1 and 127")
     private Integer orderNumber;
 }
-

@@ -1,4 +1,4 @@
-package com.nnk.springboot.config;
+package com.nnk.springboot.security;
 
 import com.nnk.springboot.services.LoggerService;
 import jakarta.servlet.ServletException;
@@ -29,4 +29,3 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         super.onAuthenticationSuccess(request, response, authentication);
     }
 }
-

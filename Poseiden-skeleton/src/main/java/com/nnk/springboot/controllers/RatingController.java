@@ -1,8 +1,8 @@
 package com.nnk.springboot.controllers;
 
 import com.nnk.springboot.domain.Rating;
-import com.nnk.springboot.dto.RatingCreateDTO;
-import com.nnk.springboot.dto.RatingUpdateDTO;
+import com.nnk.springboot.dto.rating.RatingCreateDTO;
+import com.nnk.springboot.dto.rating.RatingUpdateDTO;
 import com.nnk.springboot.services.interfaces.RatingService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.lang.NonNull;
@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import jakarta.validation.Valid;
 
+/**
+ * Controller for Rating CRUD operations.
+ */
 @Controller
 public class RatingController {
     private final RatingService ratingService;
@@ -24,17 +27,20 @@ public class RatingController {
         this.ratingService = ratingService;
     }
 
+    /** Displays the list of all ratings. */
     @RequestMapping("/rating/list")
     public String home(Model model) {
         model.addAttribute("ratings", ratingService.findAll(PageRequest.of(0, 1000), null).getContent());
         return "rating/list";
     }
 
+    /** Displays the form to add a new rating. */
     @GetMapping("/rating/add")
     public String addRatingForm(Rating rating) {
         return "rating/add";
     }
 
+    /** Validates and saves a new rating. */
     @PostMapping("/rating/validate")
     public String validate(@Valid Rating rating, BindingResult result, Model model) {
         if (!result.hasErrors()) {
@@ -50,20 +56,14 @@ public class RatingController {
         return "rating/add";
     }
 
+    /** Displays the form to update an existing rating. */
     @GetMapping("/rating/update/{id}")
     public String showUpdateForm(@PathVariable("id") @NonNull Long id, Model model) {
-        var ratingResponse = ratingService.findById(id);
-        Rating rating = Rating.builder()
-                .id(ratingResponse.getId())
-                .moodysRating(ratingResponse.getMoodysRating())
-                .sandPRating(ratingResponse.getSandPRating())
-                .fitchRating(ratingResponse.getFitchRating())
-                .orderNumber(ratingResponse.getOrderNumber())
-                .build();
-        model.addAttribute("rating", rating);
+        model.addAttribute("rating", ratingService.getForUpdateForm(id));
         return "rating/update";
     }
 
+    /** Updates an existing rating. */
     @PostMapping("/rating/update/{id}")
     public String updateRating(@PathVariable("id") @NonNull Long id, @Valid Rating rating,
             BindingResult result, Model model) {
@@ -80,8 +80,9 @@ public class RatingController {
         return "redirect:/rating/list";
     }
 
+    /** Deletes a rating by its ID. */
     @PostMapping("/rating/delete/{id}")
-    public String deleteRating(@PathVariable("id") @NonNull Long id, Model model) {
+    public String deleteRating(@PathVariable("id") @NonNull Long id) {
         ratingService.delete(id);
         return "redirect:/rating/list";
     }

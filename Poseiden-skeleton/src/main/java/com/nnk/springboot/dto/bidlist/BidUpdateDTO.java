@@ -1,23 +1,21 @@
-package com.nnk.springboot.dto;
+package com.nnk.springboot.dto.bidlist;
 
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TradeResponseDTO {
-    private Long id;
+public class BidUpdateDTO {
     private String account;
     private String type;
-    private BigDecimal buyQuantity;
-    private BigDecimal sellQuantity;
-    private LocalDateTime tradeDate;
-}
 
+    @Positive(message = "Bid quantity must be positive")
+    private BigDecimal bidQuantity;
+}

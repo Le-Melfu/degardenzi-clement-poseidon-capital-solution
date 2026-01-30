@@ -1,9 +1,9 @@
 package com.nnk.springboot.services.implementations;
 
 import com.nnk.springboot.domain.Rating;
-import com.nnk.springboot.dto.RatingCreateDTO;
-import com.nnk.springboot.dto.RatingResponseDTO;
-import com.nnk.springboot.dto.RatingUpdateDTO;
+import com.nnk.springboot.dto.rating.RatingCreateDTO;
+import com.nnk.springboot.dto.rating.RatingResponseDTO;
+import com.nnk.springboot.dto.rating.RatingUpdateDTO;
 import com.nnk.springboot.exception.EntityNotFoundException;
 import com.nnk.springboot.repositories.RatingRepository;
 import com.nnk.springboot.services.interfaces.RatingService;
@@ -44,7 +44,6 @@ public class RatingServiceImpl implements RatingService {
      * @return the created rating as a response DTO
      */
     @Override
-    @SuppressWarnings("null")
     public RatingResponseDTO create(RatingCreateDTO dto) {
         Rating rating = Rating.builder()
                 .moodysRating(dto.getMoodysRating())
@@ -72,10 +71,16 @@ public class RatingServiceImpl implements RatingService {
         return toResponseDTO(rating);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Rating getForUpdateForm(Long id) {
+        return findById(id).toRating();
+    }
+
     /**
      * Retrieves all ratings with optional filtering by Moodys rating.
      *
-     * @param pageable pagination information
+     * @param pageable     pagination information
      * @param moodysRating optional Moodys rating filter (can be null)
      * @return a page of rating response DTOs
      */
@@ -98,7 +103,7 @@ public class RatingServiceImpl implements RatingService {
     /**
      * Updates an existing rating with the provided data.
      *
-     * @param id the ID of the rating to update
+     * @param id  the ID of the rating to update
      * @param dto the DTO containing update data
      * @return the updated rating as a response DTO
      * @throws EntityNotFoundException if the rating is not found
@@ -157,4 +162,3 @@ public class RatingServiceImpl implements RatingService {
                 .build();
     }
 }
-

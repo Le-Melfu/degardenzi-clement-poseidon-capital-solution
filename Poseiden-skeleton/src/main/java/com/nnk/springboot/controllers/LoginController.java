@@ -5,6 +5,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * Controller for login page (under /app prefix).
+ */
 @Controller
 @RequestMapping("app")
 public class LoginController {
@@ -15,6 +18,7 @@ public class LoginController {
         this.logger = logger;
     }
 
+    /** Displays the login page. */
     @GetMapping("login")
     public String login() {
         logger.d("Login page accessed");

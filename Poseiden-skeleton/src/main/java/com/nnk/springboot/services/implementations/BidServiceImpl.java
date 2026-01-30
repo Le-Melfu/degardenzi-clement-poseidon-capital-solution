@@ -1,9 +1,9 @@
 package com.nnk.springboot.services.implementations;
 
 import com.nnk.springboot.domain.BidList;
-import com.nnk.springboot.dto.BidCreateDTO;
-import com.nnk.springboot.dto.BidResponseDTO;
-import com.nnk.springboot.dto.BidUpdateDTO;
+import com.nnk.springboot.dto.bidlist.BidCreateDTO;
+import com.nnk.springboot.dto.bidlist.BidResponseDTO;
+import com.nnk.springboot.dto.bidlist.BidUpdateDTO;
 import com.nnk.springboot.exception.EntityNotFoundException;
 import com.nnk.springboot.repositories.BidListRepository;
 import com.nnk.springboot.services.interfaces.BidService;
@@ -44,7 +44,6 @@ public class BidServiceImpl implements BidService {
      * @return the created bid as a response DTO
      */
     @Override
-    @SuppressWarnings("null")
     public BidResponseDTO create(BidCreateDTO dto) {
         BidList bid = BidList.builder()
                 .account(dto.getAccount())
@@ -69,6 +68,12 @@ public class BidServiceImpl implements BidService {
         BidList bid = Objects.requireNonNull(bidListRepository.findById(Objects.requireNonNull(id))
                 .orElseThrow(() -> new EntityNotFoundException("Bid not found with id: " + id)));
         return toResponseDTO(bid);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BidList getForUpdateForm(Long id) {
+        return findById(id).toBidList();
     }
 
     /**

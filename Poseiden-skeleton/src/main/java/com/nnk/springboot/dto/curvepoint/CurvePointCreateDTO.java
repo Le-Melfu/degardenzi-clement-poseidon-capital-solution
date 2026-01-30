@@ -1,4 +1,4 @@
-package com.nnk.springboot.dto;
+package com.nnk.springboot.dto.curvepoint;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
